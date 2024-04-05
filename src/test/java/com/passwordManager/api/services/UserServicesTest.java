@@ -3,10 +3,7 @@ package com.passwordManager.api.services;
 import com.passwordManager.api.data.models.User;
 import com.passwordManager.api.data.repositories.UserRepository;
 import com.passwordManager.api.dtos.requests.*;
-import com.passwordManager.api.exceptions.IncorrectNINnumberException;
-import com.passwordManager.api.exceptions.IncorrectUsernameFormatException;
-import com.passwordManager.api.exceptions.InvalidNiNException;
-import com.passwordManager.api.exceptions.UsernameExistsException;
+import com.passwordManager.api.exceptions.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -258,6 +255,7 @@ class UserServicesTest {
         login();
         CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
         creditCardInfoRequest.setCardNumber("1234567890123");
+        creditCardInfoRequest.setCardNumber("5399831619690403");
         creditCardInfoRequest.setCvv("422");
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
@@ -266,4 +264,94 @@ class UserServicesTest {
         userServices.addCreditCardInfo(creditCardInfoRequest);
         assertEquals(1,userServices.countCreditCardInfo("feyi"));
     }
+
+    @Test
+    public void userAddsCreditCardInfoWithIncorrectCardNumber_ThrowsExceptionTest(){
+        login();
+        CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
+        creditCardInfoRequest.setCardNumber("1234567890123");
+        creditCardInfoRequest.setCvv("422");
+        creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
+        creditCardInfoRequest.setExpirationMonth(12);
+        creditCardInfoRequest.setExpirationYear(2024);
+        creditCardInfoRequest.setUser("feyi");
+        assertThrows(InvalidCreditCardException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
+    }
+
+    @Test
+    public void userAddsCreditCardInfoWithInvalidLength_ThrowsExceptionTest(){
+        login();
+        CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
+        creditCardInfoRequest.setCardNumber("12345678901");
+        creditCardInfoRequest.setCvv("422");
+        creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
+        creditCardInfoRequest.setExpirationMonth(12);
+        creditCardInfoRequest.setExpirationYear(2024);
+        creditCardInfoRequest.setUser("feyi");
+        assertThrows(IncorrectCardDetailsException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
+    }
+
+    @Test
+    public void userAddsCreditCardInfoWithIncorrectCVV_ThrowsExceptionTest(){
+        login();
+        CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
+        creditCardInfoRequest.setCardNumber("5399831619690403");
+        creditCardInfoRequest.setCvv("4223");
+        creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
+        creditCardInfoRequest.setExpirationMonth(12);
+        creditCardInfoRequest.setExpirationYear(2024);
+        creditCardInfoRequest.setUser("feyi");
+        assertThrows(IncorrectCardDetailsException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
+    }
+
+
+    @Test
+    public void userAddsCreditCardInfoWithInvalidCardNumber_ThrowsExceptionTest(){
+        login();
+        CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
+        creditCardInfoRequest.setCardNumber("1234567890123");
+        creditCardInfoRequest.setCvv("422");
+        creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
+        creditCardInfoRequest.setExpirationMonth(12);
+        creditCardInfoRequest.setExpirationYear(2024);
+        creditCardInfoRequest.setUser("feyi");
+        assertThrows(InvalidCreditCardException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
+    }
+
+    @Test
+    public void userAddsCreditCardInfoWithValidCardTypeShorterCardLength_ThrowsExceptionTest(){
+        login();
+        CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
+        creditCardInfoRequest.setCardNumber("53998316196");
+        creditCardInfoRequest.setCvv("422");
+        creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
+        creditCardInfoRequest.setExpirationMonth(12);
+        creditCardInfoRequest.setExpirationYear(2024);
+        creditCardInfoRequest.setUser("feyi");
+        assertThrows(IncorrectCardDetailsException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
+    }
+
+    @Test
+    public void userDeletesCreditCardInfo_CreditCardInfoISDeleted(){
+        login();
+        CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
+        creditCardInfoRequest.setCardNumber("5399831619690403");
+        creditCardInfoRequest.setCvv("422");
+        creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
+        creditCardInfoRequest.setExpirationMonth(12);
+        creditCardInfoRequest.setExpirationYear(2024);
+        creditCardInfoRequest.setUser("feyi");
+        userServices.addCreditCardInfo(creditCardInfoRequest);
+
+        User user = userRepository.findByUsername("feyi");
+        String id = user.getCreditCardDetails().getFirst().getId();
+
+        DeleteCardInfoRequest deleteCardInfoRequest = new DeleteCardInfoRequest();
+        deleteCardInfoRequest.setCardId(id);
+        deleteCardInfoRequest.setUser("feyi");
+        userServices.deleteCreditCardInfo(deleteCardInfoRequest);
+        assertEquals(0,userServices.countCreditCardInfo("feyi"));
+
+    }
+
 }

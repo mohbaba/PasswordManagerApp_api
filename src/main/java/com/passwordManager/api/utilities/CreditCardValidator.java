@@ -3,19 +3,15 @@ package com.passwordManager.api.utilities;
 import com.passwordManager.api.data.models.CreditCardType;
 import com.passwordManager.api.exceptions.IncorrectCardDetailsException;
 
-import java.util.*;
-
 public class CreditCardValidator{
     private static final int[] cardNumList = new int[16];
-    private static String cardNum;
-    private static int cardDigitLength;
 
-    public static boolean lengthChecker(){
+    public static boolean lengthChecker(String cardNum){
 
         return cardNum.length() >= 13 && cardNum.length() <= 16;
     }
 
-    public static CreditCardType cardTypeChecker(String cardNumber){
+    public static CreditCardType getCardType(String cardNumber){
 
         CreditCardType creditCardType = null;
         switch (cardNumber.charAt(0)){
@@ -35,19 +31,17 @@ public class CreditCardValidator{
         return creditCardType;
     }
 
-    public static void listConverter(){
+    public static int[] listConverter(String cardNum){
 
-        for(int i = 0; i < cardDigitLength ; i++){
+        for(int i = 0; i < cardNum.length() ; i++){
             cardNumList[i] = Integer.parseInt(String.valueOf(cardNum.charAt(i)));
         }
 
-
+        return cardNumList;
     }
 
-    public static int[] evenDoubleDigits(){
-        int num1 = 0;
-        int num2 = 0;
-        int[] newArray = new int[cardDigitLength];
+    public static int[] evenDoubleDigits(String cardNumber){
+        int[] newArray = new int[cardNumber.length()];
         for(int i = 0 ; i < newArray.length ; i+=2){
 
             newArray[i] = cardNumList[i] * 2;
@@ -55,8 +49,8 @@ public class CreditCardValidator{
         }
         for(int i = 0 ; i < newArray.length ; i+=2){
             if(newArray[i] >= 10){
-                num1 = newArray[i] / 10;
-                num2 = newArray[i] % 10;
+               int num1 = newArray[i] / 10;
+               int num2 = newArray[i] % 10;
                 newArray[i] = num1 + num2;
             }
 
@@ -65,8 +59,8 @@ public class CreditCardValidator{
     }
 
 
-    public static int[] oddDoubleDigits(){
-        int[] newArray = new int[cardDigitLength];
+    public static int[] oddDoubleDigits(String cardNum){
+        int[] newArray = new int[cardNum.length()];
         for(int i = 1 ; i < newArray.length ; i+=2){
 
             newArray[i] = cardNumList[i];
@@ -75,9 +69,9 @@ public class CreditCardValidator{
         return newArray;
     }
 
-    public static int addSingleDigit(){
+    public static int addSingleDigit(String cardNum){
         int total = 0;
-        int[] newArray = evenDoubleDigits();
+        int[] newArray = evenDoubleDigits(cardNum);
         for (int j : newArray) {
 
             total += j;
@@ -86,14 +80,14 @@ public class CreditCardValidator{
         return total;
     }
 
-    public static int sumTotal(){
+    public static int sumTotal(String cardNum){
 
-        return addSingleDigit() + addOdd();
+        return addSingleDigit(cardNum) + addOdd(cardNum);
     }
 
-    public static int addOdd(){
+    public static int addOdd(String cardNum){
         int oddTotal = 0;
-        int[] newArray = oddDoubleDigits();
+        int[] newArray = oddDoubleDigits(cardNum);
         for (int j : newArray) {
 
             oddTotal += j;
@@ -102,20 +96,28 @@ public class CreditCardValidator{
         return oddTotal;
     }
 
-    public static boolean validityCheck(){
+    public static boolean validityCheck(String cardNum){
+        listConverter(cardNum);
 
+        return sumTotal(cardNum) % 10 == 0;
+    }
 
-        return sumTotal() % 10 == 0;
+    public static boolean isValidCvv(String cardNumber){
+        for (int index = 0; index < cardNumber.length(); index++) {
+            if (Character.isLetter(cardNumber.charAt(index)))return false;
+        }
+        return true;
     }
 
     public static void outputDisplay(String cardNum){
 
 
         System.out.println("***************************************");
-        System.out.printf("**Credit Card Type: %s%n",cardTypeChecker(cardNum));
+        System.out.printf("**Credit Card Type: %s%n", getCardType(cardNum));
         System.out.printf("**Credit Card Number: %s%n", cardNum);
-        System.out.printf("**Credit Card Digit Length: %s%n", cardDigitLength);
-        System.out.printf("**Credit Card Validity Status: %s%n", validityCheck() ? "Valid": "Invalid");
+        System.out.printf("**Credit Card Digit Length: %s%n", cardNum.length());
+        System.out.printf("**Credit Card Validity Status: %s%n", validityCheck(cardNum) ? "Valid":
+                "Invalid");
         System.out.println("***************************************");
 
     }
@@ -142,7 +144,7 @@ public class CreditCardValidator{
 //        addSingleDigit();
 //        sumTotal();
 //        validityCheck();
-//        outputDisplay(cardNum);
+//
 //
 //
 //    }

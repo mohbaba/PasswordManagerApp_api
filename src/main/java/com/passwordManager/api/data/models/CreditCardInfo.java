@@ -12,6 +12,7 @@ public class CreditCardInfo {
     private String cardholderName;
     private String cardNumber;
     private String cvv;
+    private CreditCardType cardType;
     private LocalDate expirationMonth;
     private LocalDate expirationYear;
 }

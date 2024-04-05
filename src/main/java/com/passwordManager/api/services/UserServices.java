@@ -33,4 +33,6 @@ public interface UserServices {
     void addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest);
 
     int countCreditCardInfo(String username);
+
+    void deleteCreditCardInfo(DeleteCardInfoRequest deleteCardInfoRequest);
 }

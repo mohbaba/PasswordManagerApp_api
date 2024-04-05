@@ -54,15 +54,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void addNewClassifiedInfo(ClassInfoTypeRequest classInfoTypeRequest) {
-//        String info = classInfoTypeRequest.getInfoType();
-////        checkInputInfo(info);
-//        switch (info){
-//            case "login": addLoginInfo();
-//            case "identity": addIdentityInfo();
-//            case "case": addCardInfo();
-//            default:throw new InvalidInputException(String.format("%s is an invalid input, enter" +
-//                    " 'login' or 'identity' or 'card'",info));
-//        }
+
     }
 
 
@@ -135,11 +127,27 @@ public class UserServicesImpl implements UserServices{
         checkUserExists(user);
 
         CreditCardInfo creditCard = creditCardInfoServices.addCreditCardInfo(creditCardInfoRequest);
+        List<CreditCardInfo> userCardDetails = user.getCreditCardDetails();
+        userCardDetails.add(creditCard);
+        user.setCreditCardDetails(userCardDetails);
+        userRepository.save(user);
     }
 
     @Override
     public int countCreditCardInfo(String username) {
-        return 0;
+        User user = userRepository.findByUsername(username);
+        return user.getCreditCardDetails().size();
+    }
+
+    @Override
+    public void deleteCreditCardInfo(DeleteCardInfoRequest deleteCardInfoRequest) {
+        CreditCardInfo deletedCreditCardInfo =
+                creditCardInfoServices.deleteCreditCardInfo(deleteCardInfoRequest);
+        User user = userRepository.findByUsername(deleteCardInfoRequest.getUser());
+        checkUserExists(user);
+        user.getCreditCardDetails().remove(deletedCreditCardInfo);
+        userRepository.save(user);
+
     }
 
     @Override
@@ -162,8 +170,6 @@ public class UserServicesImpl implements UserServices{
 
     }
 
-    private void addCardInfo() {
-    }
 
     private void checkInputInfo(String info){
         boolean isValid = info.equals("login") || info.equals("identity") || info.equals("card");
