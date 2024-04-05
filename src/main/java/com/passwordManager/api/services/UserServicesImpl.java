@@ -1,9 +1,6 @@
 package com.passwordManager.api.services;
 
-import com.passwordManager.api.data.models.ClassifiedInfoType;
-import com.passwordManager.api.data.models.Identity;
-import com.passwordManager.api.data.models.Login;
-import com.passwordManager.api.data.models.User;
+import com.passwordManager.api.data.models.*;
 import com.passwordManager.api.data.repositories.UserRepository;
 import com.passwordManager.api.dtos.requests.*;
 import com.passwordManager.api.dtos.responses.RegisterUserResponse;
@@ -22,6 +19,8 @@ public class UserServicesImpl implements UserServices{
     private LoginInfoServices loginInfoServices;
     @Autowired
     private IdentityInfoServices identityInfoServices;
+    @Autowired
+    private CreditCardInfoServices creditCardInfoServices;
 
 
     @Override
@@ -128,6 +127,19 @@ public class UserServicesImpl implements UserServices{
         userIdentities.removeIf(identity -> identity.getId().equals(editedIdentity.getId()));
         userIdentities.add(editedIdentity);
         userRepository.save(user);
+    }
+
+    @Override
+    public void addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest) {
+        User user = userRepository.findByUsername(creditCardInfoRequest.getUser());
+        checkUserExists(user);
+
+        CreditCardInfo creditCard = creditCardInfoServices.addCreditCardInfo(creditCardInfoRequest);
+    }
+
+    @Override
+    public int countCreditCardInfo(String username) {
+        return 0;
     }
 
     @Override

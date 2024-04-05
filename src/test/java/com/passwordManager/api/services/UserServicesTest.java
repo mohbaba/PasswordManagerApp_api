@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -253,6 +255,15 @@ class UserServicesTest {
 
     @Test
     public void userAddsCreditCardInfo_CreditCardInfoIsAdded(){
-
+        login();
+        CreditCardInfoRequest creditCardInfoRequest = new CreditCardInfoRequest();
+        creditCardInfoRequest.setCardNumber("1234567890123");
+        creditCardInfoRequest.setCvv("422");
+        creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
+        creditCardInfoRequest.setExpirationMonth(12);
+        creditCardInfoRequest.setExpirationYear(2024);
+        creditCardInfoRequest.setUser("feyi");
+        userServices.addCreditCardInfo(creditCardInfoRequest);
+        assertEquals(1,userServices.countCreditCardInfo("feyi"));
     }
 }

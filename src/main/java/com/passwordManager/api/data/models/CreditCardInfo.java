@@ -7,12 +7,11 @@ import java.time.LocalDate;
 
 @Data
 @Document("Card Details")
-public class CardDetails {
+public class CreditCardInfo {
     private String id;
     private String cardholderName;
     private String cardNumber;
     private String cvv;
-    private String pin;
     private LocalDate expirationMonth;
     private LocalDate expirationYear;
 }

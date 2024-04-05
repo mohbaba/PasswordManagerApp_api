@@ -1,12 +1,10 @@
 package com.passwordManager.api.utilities;
 
+import com.passwordManager.api.data.models.CreditCardInfo;
 import com.passwordManager.api.data.models.Identity;
 import com.passwordManager.api.data.models.Login;
 import com.passwordManager.api.data.models.User;
-import com.passwordManager.api.dtos.requests.EditIdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.IdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.LoginInfoRequest;
-import com.passwordManager.api.dtos.requests.RegisterUserRequest;
+import com.passwordManager.api.dtos.requests.*;
 import com.passwordManager.api.dtos.responses.RegisterUserResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Optional;
 
 import static com.passwordManager.api.utilities.Cipher.encrypt;
+import static com.passwordManager.api.utilities.Utils.getExpirationMonth;
+import static com.passwordManager.api.utilities.Utils.getExpirationYear;
 
 public class Mapper {
 
@@ -61,5 +61,14 @@ public class Mapper {
         foundIdentity.setMiddleName(editIdentityInfoRequest.getMiddleName());
         foundIdentity.setAddress(editIdentityInfoRequest.getAddress());
         return foundIdentity;
+    }
+
+    public static CreditCardInfo map(CreditCardInfoRequest creditCardInfoRequest) {
+        CreditCardInfo creditCardInfo = new CreditCardInfo();
+        creditCardInfo.setCardholderName(creditCardInfoRequest.getCardholderName());
+        creditCardInfo.setCardNumber(creditCardInfoRequest.getCardNumber());
+        creditCardInfo.setExpirationMonth(getExpirationMonth(creditCardInfoRequest.getExpirationMonth()));
+        creditCardInfo.setExpirationYear(getExpirationYear(creditCardInfoRequest.getExpirationYear()));
+        return creditCardInfo;
     }
 }

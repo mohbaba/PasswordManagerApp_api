@@ -5,19 +5,20 @@ import com.passwordManager.api.exceptions.InvalidInputException;
 import lombok.Getter;
 
 @Getter
-public enum ClassifiedInfoType {
-    LOGIN("login"),
-    IDENTITY("identity"),
-    CARD("card");
+public enum CreditCardType {
+    VISA_CARD("Visa Card"),
+    MASTERCARD("Mastercard"),
+    AMERICAN_EXPRESS("American Express Card"),
+    DISCOVER("Discover");
 
     private final String message;
 
-    ClassifiedInfoType(String message){
+    CreditCardType(String message){
         this.message = message;
     }
 
-    public static ClassifiedInfoType getType(String message) {
-        for (ClassifiedInfoType type : ClassifiedInfoType.values()) {
+    public static CreditCardType getType(String message) {
+        for (CreditCardType type : CreditCardType.values()) {
             if (type.getMessage().equals(message)) {
                 return type;
             }

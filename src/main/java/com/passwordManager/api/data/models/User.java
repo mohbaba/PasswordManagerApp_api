@@ -15,7 +15,7 @@ public class User {
     private String password;
     private List<Login> loginDetails = new ArrayList<>();
     private List<Identity> identities = new ArrayList<>();
-    private List<CardDetails> cardDetails = new ArrayList<>();
+    private List<CreditCardInfo> creditCardDetails = new ArrayList<>();
 
     public void setUsername(String username) {
         this.username = username.toLowerCase();

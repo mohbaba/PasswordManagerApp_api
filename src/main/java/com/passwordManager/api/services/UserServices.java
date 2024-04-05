@@ -1,6 +1,5 @@
 package com.passwordManager.api.services;
 
-import com.passwordManager.api.data.models.ClassifiedInfoType;
 import com.passwordManager.api.dtos.requests.*;
 import com.passwordManager.api.dtos.responses.RegisterUserResponse;
 
@@ -30,4 +29,8 @@ public interface UserServices {
     void deleteIdentityInfo(DeleteIdentityInfoRequest deleteIdentityInfoRequest);
 
     void editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest);
+
+    void addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest);
+
+    int countCreditCardInfo(String username);
 }
