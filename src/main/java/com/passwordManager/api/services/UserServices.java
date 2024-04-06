@@ -1,8 +1,7 @@
 package com.passwordManager.api.services;
 
 import com.passwordManager.api.dtos.requests.*;
-import com.passwordManager.api.dtos.responses.LoginUserResponse;
-import com.passwordManager.api.dtos.responses.RegisterUserResponse;
+import com.passwordManager.api.dtos.responses.*;
 
 public interface UserServices {
     RegisterUserResponse register(RegisterUserRequest registerUserRequest);
@@ -11,21 +10,22 @@ public interface UserServices {
 
     LoginUserResponse login(LoginRequest loginRequest);
 
+    LogoutUserResponse logout(LogoutUserRequest logoutUserRequest);
+
     boolean isLoggedIn(String username);
 
-    void addNewClassifiedInfo(ClassInfoTypeRequest classInfoTypeRequest);
+    long countLoginInfoFor(String username);
 
-    long countLoginType(String username);
+    LoginInfoResponse addLoginInfo(LoginInfoRequest loginInfoRequest);
 
-    void addLoginInfo(LoginInfoRequest loginInfoRequest);
+    DeleteLoginInfoResponse deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest);
 
-    void deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest);
-
-    void editLoginInfo(EditLoginInfoRequest editLoginInfoRequest);
+    LoginInfoResponse editLoginInfo(EditLoginInfoRequest editLoginInfoRequest);
+    GetLoginInfoResponse getLoginInfo(GetLoginInfoRequest getLoginInfoRequest);
 
     void addIdentityInfo(IdentityInfoRequest identityInfoRequest);
 
-    long countIdentityInfo(String username);
+    long countIdentityInfoFor(String username);
 
     void deleteIdentityInfo(DeleteIdentityInfoRequest deleteIdentityInfoRequest);
 
@@ -33,7 +33,7 @@ public interface UserServices {
 
     void addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest);
 
-    int countCreditCardInfo(String username);
+    int countCreditCardInfoFor(String username);
 
     void deleteCreditCardInfo(DeleteCardInfoRequest deleteCardInfoRequest);
 }

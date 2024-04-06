@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class LoginInfoRequest {
-    private String usernameToSave;
+    private String usernameToBeSaved;
     private String username;
-    private String password;
+    private String passwordToBeSaved;
     private String website;
 }

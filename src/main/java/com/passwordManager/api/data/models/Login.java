@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Login {
     @Id
     private String id;
-    private String usernameToSave;
-    private String passwordToSave;
+    private String savedUsername;
+    private String savedPassword;
     private String website;
 }

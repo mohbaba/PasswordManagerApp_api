@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -109,20 +107,20 @@ class UserServicesTest {
     public void saveLoginCredentialTypeForUser_LoginDetailIsSaved(){
         login();
         LoginInfoRequest loginInfoRequest = new LoginInfoRequest();
-        loginInfoRequest.setUsernameToSave("moh");
+        loginInfoRequest.setUsernameToBeSaved("moh");
         loginInfoRequest.setUsername("feyi");
-        loginInfoRequest.setPassword("moh");
+        loginInfoRequest.setPasswordToBeSaved("moh");
         userServices.addLoginInfo(loginInfoRequest);
-        assertEquals(1L,userServices.countLoginType("feyi"));
+        assertEquals(1L,userServices.countLoginInfoFor("feyi"));
     }
 
     @Test
     public void deleteLoginInfoForUser_LoginInfoISDeleted(){
         login();
         LoginInfoRequest loginInfoRequest = new LoginInfoRequest();
-        loginInfoRequest.setUsernameToSave("moh");
+        loginInfoRequest.setUsernameToBeSaved("moh");
         loginInfoRequest.setUsername("feyi");
-        loginInfoRequest.setPassword("moh");
+        loginInfoRequest.setPasswordToBeSaved("moh");
         userServices.addLoginInfo(loginInfoRequest);
 
         DeleteLoginInfoRequest deleteLoginInfoRequest = new DeleteLoginInfoRequest();
@@ -131,7 +129,7 @@ class UserServicesTest {
         deleteLoginInfoRequest.setLoginInfoId(id);
         deleteLoginInfoRequest.setUsername("feyi");
         userServices.deleteLoginInfo(deleteLoginInfoRequest);
-        assertEquals(0,userServices.countLoginType("feyi"));
+        assertEquals(0,userServices.countLoginInfoFor("feyi"));
 
     }
 
@@ -139,14 +137,14 @@ class UserServicesTest {
     public void editLoginInfo_LoginInfoISEdited(){
         login();
         LoginInfoRequest loginInfoRequest = new LoginInfoRequest();
-        loginInfoRequest.setUsernameToSave("moh");
+        loginInfoRequest.setUsernameToBeSaved("moh");
         loginInfoRequest.setUsername("feyi");
-        loginInfoRequest.setPassword("moh");
+        loginInfoRequest.setPasswordToBeSaved("moh");
         userServices.addLoginInfo(loginInfoRequest);
-        assertEquals(1,userServices.countLoginType("feyi"));
+        assertEquals(1,userServices.countLoginInfoFor("feyi"));
 
         User user = userRepository.findByUsername("feyi");
-        assertEquals("moh", user.getLoginDetails().getFirst().getUsernameToSave());
+        assertEquals("moh", user.getLoginDetails().getFirst().getSavedUsername());
         String id = user.getLoginDetails().getFirst().getId();
         EditLoginInfoRequest editLoginInfoRequest = new EditLoginInfoRequest();
         editLoginInfoRequest.setNewPassword("babs");
@@ -156,9 +154,9 @@ class UserServicesTest {
         userServices.editLoginInfo(editLoginInfoRequest);
 
         user = userRepository.findByUsername("feyi");
-        assertEquals(1,userServices.countLoginType("feyi"));
-        assertEquals("baba",user.getLoginDetails().getFirst().getUsernameToSave());
-        assertEquals("babs",user.getLoginDetails().getFirst().getPasswordToSave());
+        assertEquals(1,userServices.countLoginInfoFor("feyi"));
+        assertEquals("baba",user.getLoginDetails().getFirst().getSavedUsername());
+        assertEquals("babs",user.getLoginDetails().getFirst().getSavedPassword());
     }
 
     @Test
@@ -171,7 +169,7 @@ class UserServicesTest {
         identityInfoRequest.setMiddleName("Muhammad");
         identityInfoRequest.setNationalIdentityNumber("12345678901");
         userServices.addIdentityInfo(identityInfoRequest);
-        assertEquals(1L, userServices.countIdentityInfo("feyi"));
+        assertEquals(1L, userServices.countIdentityInfoFor("feyi"));
 
     }
 
@@ -197,7 +195,7 @@ class UserServicesTest {
         identityInfoRequest.setMiddleName("Muhammad");
         identityInfoRequest.setNationalIdentityNumber("12345678901");
         userServices.addIdentityInfo(identityInfoRequest);
-        assertEquals(1,userServices.countIdentityInfo("feyi"));
+        assertEquals(1,userServices.countIdentityInfoFor("feyi"));
 
         User user = userRepository.findByUsername("feyi");
         String id = user.getIdentities().getFirst().getId();
@@ -205,7 +203,7 @@ class UserServicesTest {
         deleteIdentityInfoRequest.setIdentityInfoId(id);
         deleteIdentityInfoRequest.setUser("feyi");
         userServices.deleteIdentityInfo(deleteIdentityInfoRequest);
-        assertEquals(0,userServices.countIdentityInfo("feyi"));
+        assertEquals(0,userServices.countIdentityInfoFor("feyi"));
 
     }
 
@@ -220,7 +218,7 @@ class UserServicesTest {
         identityInfoRequest.setNationalIdentityNumber("12345678901");
         identityInfoRequest.setAddress("Address");
         userServices.addIdentityInfo(identityInfoRequest);
-        assertEquals(1,userServices.countIdentityInfo("feyi"));
+        assertEquals(1,userServices.countIdentityInfoFor("feyi"));
         User user = userRepository.findByUsername("feyi");
 
         EditIdentityInfoRequest editIdentityInfoRequest = new EditIdentityInfoRequest();
@@ -229,7 +227,7 @@ class UserServicesTest {
         editIdentityInfoRequest.setNationalIdentityNumber("11211111111");
         editIdentityInfoRequest.setFirstName("abike");
         userServices.editIdentityInfo(editIdentityInfoRequest);
-        assertEquals(1,userServices.countIdentityInfo("feyi"));
+        assertEquals(1,userServices.countIdentityInfoFor("feyi"));
         assertEquals("abike",userRepository.findByUsername("feyi").getIdentities().getFirst().getFirstName());
         assertEquals("11211111111",userRepository.findByUsername("feyi").getIdentities().getFirst().getNationalIdentityNumber());
 
@@ -262,7 +260,7 @@ class UserServicesTest {
         creditCardInfoRequest.setExpirationYear(2024);
         creditCardInfoRequest.setUser("feyi");
         userServices.addCreditCardInfo(creditCardInfoRequest);
-        assertEquals(1,userServices.countCreditCardInfo("feyi"));
+        assertEquals(1,userServices.countCreditCardInfoFor("feyi"));
     }
 
     @Test
@@ -350,7 +348,7 @@ class UserServicesTest {
         deleteCardInfoRequest.setCardId(id);
         deleteCardInfoRequest.setUser("feyi");
         userServices.deleteCreditCardInfo(deleteCardInfoRequest);
-        assertEquals(0,userServices.countCreditCardInfo("feyi"));
+        assertEquals(0,userServices.countCreditCardInfoFor("feyi"));
 
     }
 

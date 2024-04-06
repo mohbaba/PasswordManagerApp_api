@@ -3,14 +3,14 @@ package com.passwordManager.api.services;
 import com.passwordManager.api.data.models.*;
 import com.passwordManager.api.data.repositories.UserRepository;
 import com.passwordManager.api.dtos.requests.*;
-import com.passwordManager.api.dtos.responses.LoginUserResponse;
-import com.passwordManager.api.dtos.responses.RegisterUserResponse;
+import com.passwordManager.api.dtos.responses.*;
 import com.passwordManager.api.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.passwordManager.api.utilities.Cipher.decrypt;
 import static com.passwordManager.api.utilities.Mapper.*;
 @Service
 public class UserServicesImpl implements UserServices{
@@ -52,39 +52,46 @@ public class UserServicesImpl implements UserServices{
     }
 
     @Override
+    public LogoutUserResponse logout(LogoutUserRequest logoutUserRequest){
+        checkUserLoggedIn(logoutUserRequest.getUsername());
+        User user = userRepository.findByUsername(logoutUserRequest.getUsername());
+        checkUserExists(user);
+        user.setLoggedIn(false);
+        return mapFrom(userRepository.save(user));
+    }
+
+    @Override
     public boolean isLoggedIn(String username) {
-        checkUserLoggedIn(username);
+//        checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
         return user.isLoggedIn();
     }
 
 
-    @Override
-    public void addNewClassifiedInfo(ClassInfoTypeRequest classInfoTypeRequest) {
-
-    }
-
-
 
     @Override
-    public void addLoginInfo(LoginInfoRequest loginInfoRequest) {
+    public LoginInfoResponse addLoginInfo(LoginInfoRequest loginInfoRequest) {
         checkUserLoggedIn(loginInfoRequest.getUsername());
         Login login = loginInfoServices.addLogin(loginInfoRequest);
         User user = userRepository.findByUsername(loginInfoRequest.getUsername());
         checkUserExists(user);
         addLoginDetailsTo(user, login);
-
+        return map(login);
     }
 
     @Override
-    public void deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest) {
+    public DeleteLoginInfoResponse deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest) {
         checkUserLoggedIn(deleteLoginInfoRequest.getUsername());
         User user = userRepository.findByUsername(deleteLoginInfoRequest.getUsername());
         checkUserExists(user);
+        validateUser(user, deleteLoginInfoRequest.getPassword());
 
         Login login = loginInfoServices.deleteLoginInfo(deleteLoginInfoRequest);
         user.getLoginDetails().remove(login);
         userRepository.save(user);
+        DeleteLoginInfoResponse response = new DeleteLoginInfoResponse();
+        response.setDeleted(true);
+        return response;
     }
 
     @Override
@@ -102,7 +109,7 @@ public class UserServicesImpl implements UserServices{
     }
 
     @Override
-    public long countIdentityInfo(String username) {
+    public long countIdentityInfoFor(String username) {
         checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
         checkUserExists(user);
@@ -148,7 +155,7 @@ public class UserServicesImpl implements UserServices{
     }
 
     @Override
-    public int countCreditCardInfo(String username) {
+    public int countCreditCardInfoFor(String username) {
         checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
         return user.getCreditCardDetails().size();
@@ -167,7 +174,7 @@ public class UserServicesImpl implements UserServices{
     }
 
     @Override
-    public void editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) {
+    public LoginInfoResponse editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) {
         checkUserLoggedIn(editLoginInfoRequest.getUsername());
         User user = userRepository.findByUsername(editLoginInfoRequest.getUsername());
         checkUserExists(user);
@@ -184,11 +191,32 @@ public class UserServicesImpl implements UserServices{
         userLogins.add(editedLogin);
         user.setLoginDetails(userLogins);
         userRepository.save(user);
-
+        return map(editedLogin);
     }
 
     @Override
-    public long countLoginType(String username) {
+    public GetLoginInfoResponse getLoginInfo(GetLoginInfoRequest getLoginInfoRequest){
+        if (getLoginInfoRequest.getUsername() == null) throw new FieldRequiredException("Enter " +
+                "necessary details to fetch login details");
+        if (getLoginInfoRequest.getPassword() == null) throw new FieldRequiredException("Enter " +
+                "necessary details to fetch login details");
+        checkUserLoggedIn(getLoginInfoRequest.getUsername());
+        User user = userRepository.findByUsername(getLoginInfoRequest.getUsername());
+        validateUser(user, getLoginInfoRequest.getPassword());
+
+        Login login = loginInfoServices.getLoginInfo(getLoginInfoRequest);
+        return mapToResponse(login);
+    };
+
+    private void validateUser(User user,String password){
+        if (!decrypt(user.getPassword()).equals(password))throw new IncorrectPasswordException(
+                "The " +
+                "password you entered is incorrect");
+    }
+
+
+    @Override
+    public long countLoginInfoFor(String username) {
         checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
 
@@ -198,7 +226,8 @@ public class UserServicesImpl implements UserServices{
     private static void validateLogin(LoginRequest loginRequest, User user){
         check(loginRequest.getUsername());
         if (user == null)throw new UserNotFoundException(String.format("%s does not exist", loginRequest.getUsername()));
-        if (!loginRequest.getPassword().equals(user.getPassword()))throw new IncorrectPasswordException("Password " +
+        if (!loginRequest.getPassword().equals(decrypt(user.getPassword())))throw new IncorrectPasswordException(
+                "Password " +
                 "is not correct");
     }
 

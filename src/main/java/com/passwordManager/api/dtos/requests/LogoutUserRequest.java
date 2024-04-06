@@ -3,8 +3,6 @@ package com.passwordManager.api.dtos.requests;
 import lombok.Data;
 
 @Data
-public class DeleteLoginInfoRequest {
-    private String loginInfoId;
+public class LogoutUserRequest {
     private String username;
-    private String password;
 }
