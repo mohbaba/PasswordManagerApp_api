@@ -2,6 +2,7 @@ package com.passwordManager.api.utilities;
 
 import com.passwordManager.api.data.models.*;
 import com.passwordManager.api.dtos.requests.*;
+import com.passwordManager.api.dtos.responses.LoginUserResponse;
 import com.passwordManager.api.dtos.responses.RegisterUserResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+import static com.passwordManager.api.utilities.Cipher.decrypt;
 import static com.passwordManager.api.utilities.Cipher.encrypt;
 import static com.passwordManager.api.utilities.CreditCardValidator.getCardType;
 import static com.passwordManager.api.utilities.Utils.getExpirationMonth;
@@ -21,21 +23,28 @@ public class Mapper {
     public static User map(RegisterUserRequest registerUserRequest){
         User user = new User();
         user.setUsername(registerUserRequest.getUsername());
-        user.setPassword(registerUserRequest.getPassword());
+        user.setPassword(encrypt(registerUserRequest.getPassword()));
         return user;
     }
 
     public static RegisterUserResponse map(User user){
         RegisterUserResponse registerUserResponse = new RegisterUserResponse();
         registerUserResponse.setUsername(user.getUsername());
-        registerUserResponse.setPassword(user.getPassword());
+        registerUserResponse.setPassword(decrypt(user.getPassword()));
         return registerUserResponse;
+    }
+
+    public static LoginUserResponse mapTo(User user){
+        LoginUserResponse loginUserResponse = new LoginUserResponse();
+        loginUserResponse.setUserId(user.getId());
+        loginUserResponse.setUsername(user.getUsername());
+        return loginUserResponse;
     }
 
     public static Login map(LoginInfoRequest loginInfoRequest) {
         Login login = new Login();
         login.setUsernameToSave(loginInfoRequest.getUsernameToSave());
-        login.setPasswordToSave(loginInfoRequest.getPassword());
+        login.setPasswordToSave(encrypt(loginInfoRequest.getPassword()));
         login.setWebsite(loginInfoRequest.getWebsite());
         return login;
     }
@@ -64,7 +73,8 @@ public class Mapper {
     public static CreditCardInfo map(CreditCardInfoRequest creditCardInfoRequest) {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
         creditCardInfo.setCardholderName(creditCardInfoRequest.getCardholderName());
-        creditCardInfo.setCardNumber(creditCardInfoRequest.getCardNumber());
+        creditCardInfo.setCardNumber(encrypt(creditCardInfoRequest.getCardNumber()));
+        creditCardInfo.setCvv(encrypt(creditCardInfoRequest.getCvv()));
         creditCardInfo.setCardType(getCardType(creditCardInfoRequest.getCardNumber()));
         creditCardInfo.setExpirationMonth(getExpirationMonth(creditCardInfoRequest.getExpirationMonth()));
         creditCardInfo.setExpirationYear(getExpirationYear(creditCardInfoRequest.getExpirationYear()));

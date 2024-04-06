@@ -1,6 +1,7 @@
 package com.passwordManager.api.services;
 
 import com.passwordManager.api.dtos.requests.*;
+import com.passwordManager.api.dtos.responses.LoginUserResponse;
 import com.passwordManager.api.dtos.responses.RegisterUserResponse;
 
 public interface UserServices {
@@ -8,7 +9,7 @@ public interface UserServices {
 
     long countUsers();
 
-    void login(LoginRequest loginRequest);
+    LoginUserResponse login(LoginRequest loginRequest);
 
     boolean isLoggedIn(String username);
 

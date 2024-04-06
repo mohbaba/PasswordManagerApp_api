@@ -3,6 +3,7 @@ package com.passwordManager.api.services;
 import com.passwordManager.api.data.models.*;
 import com.passwordManager.api.data.repositories.UserRepository;
 import com.passwordManager.api.dtos.requests.*;
+import com.passwordManager.api.dtos.responses.LoginUserResponse;
 import com.passwordManager.api.dtos.responses.RegisterUserResponse;
 import com.passwordManager.api.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +33,27 @@ public class UserServicesImpl implements UserServices{
         return map(userRepository.save(user));
     }
 
+    private void checkUserLoggedIn(String username){
+        if (!isLoggedIn(username))throw new LoginRequiredException("User must be logged in");
+    }
+
     @Override
     public long countUsers() {
+
         return userRepository.count();
     }
 
     @Override
-    public void login(LoginRequest loginRequest) {
+    public LoginUserResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         validateLogin(loginRequest, user);
         user.setLoggedIn(true);
-        userRepository.save(user);
+        return mapTo(userRepository.save(user));
     }
 
     @Override
     public boolean isLoggedIn(String username) {
+        checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
         return user.isLoggedIn();
     }
@@ -61,6 +68,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void addLoginInfo(LoginInfoRequest loginInfoRequest) {
+        checkUserLoggedIn(loginInfoRequest.getUsername());
         Login login = loginInfoServices.addLogin(loginInfoRequest);
         User user = userRepository.findByUsername(loginInfoRequest.getUsername());
         checkUserExists(user);
@@ -70,6 +78,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest) {
+        checkUserLoggedIn(deleteLoginInfoRequest.getUsername());
         User user = userRepository.findByUsername(deleteLoginInfoRequest.getUsername());
         checkUserExists(user);
 
@@ -80,6 +89,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void addIdentityInfo(IdentityInfoRequest identityInfoRequest) {
+        checkUserLoggedIn(identityInfoRequest.getUser());
         Identity savedIdentity = identityInfoServices.addIdentityInfo(identityInfoRequest);
         User user = userRepository.findByUsername(identityInfoRequest.getUser());
         checkUserExists(user);
@@ -93,6 +103,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public long countIdentityInfo(String username) {
+        checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
         checkUserExists(user);
 
@@ -101,6 +112,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void deleteIdentityInfo(DeleteIdentityInfoRequest deleteIdentityInfoRequest) {
+        checkUserLoggedIn(deleteIdentityInfoRequest.getUser());
         User user = userRepository.findByUsername(deleteIdentityInfoRequest.getUser());
         checkUserExists(user);
         Identity deletedIdentityInfo = identityInfoServices.deleteIdentityInfo(deleteIdentityInfoRequest);
@@ -111,6 +123,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest) {
+        checkUserLoggedIn(editIdentityInfoRequest.getUser());
         User user = userRepository.findByUsername(editIdentityInfoRequest.getUser());
         checkUserExists(user);
 
@@ -123,6 +136,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest) {
+        checkUserLoggedIn(creditCardInfoRequest.getUser());
         User user = userRepository.findByUsername(creditCardInfoRequest.getUser());
         checkUserExists(user);
 
@@ -135,12 +149,14 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public int countCreditCardInfo(String username) {
+        checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
         return user.getCreditCardDetails().size();
     }
 
     @Override
     public void deleteCreditCardInfo(DeleteCardInfoRequest deleteCardInfoRequest) {
+        checkUserLoggedIn(deleteCardInfoRequest.getUser());
         CreditCardInfo deletedCreditCardInfo =
                 creditCardInfoServices.deleteCreditCardInfo(deleteCardInfoRequest);
         User user = userRepository.findByUsername(deleteCardInfoRequest.getUser());
@@ -152,6 +168,7 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public void editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) {
+        checkUserLoggedIn(editLoginInfoRequest.getUsername());
         User user = userRepository.findByUsername(editLoginInfoRequest.getUsername());
         checkUserExists(user);
 
@@ -170,15 +187,9 @@ public class UserServicesImpl implements UserServices{
 
     }
 
-
-    private void checkInputInfo(String info){
-        boolean isValid = info.equals("login") || info.equals("identity") || info.equals("card");
-        if (!isValid)throw new InvalidInputException(String.format("%s is an invalid input, enter" +
-                " 'login' or 'identity' or 'card'",info));
-    }
-
     @Override
     public long countLoginType(String username) {
+        checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
 
         return user.getLoginDetails().size();
