@@ -41,5 +41,5 @@ public interface UserServices {
 
     GetCreditCardInfoResponse getCreditCardInfo(GetCardInfoRequest getCardInfoRequest);
 
-    EditCreditCardInfoResponse editCreditCardInfo(EditGetCardInfoRequest editGetCardInfoRequest);
+    GetCreditCardInfoResponse editCreditCardInfo(EditGetCardInfoRequest editGetCardInfoRequest);
 }

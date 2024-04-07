@@ -134,21 +134,22 @@ public class Mapper {
         return creditCardInfo;
     }
 
-    public static EditCreditCardInfoResponse map(CreditCardInfo editedCard) {
-        EditCreditCardInfoResponse response = new EditCreditCardInfoResponse();
+//    public static EditCreditCardInfoResponse map(CreditCardInfo editedCard) {
+//        EditCreditCardInfoResponse response = new EditCreditCardInfoResponse();
+//
+//        response.setCardType(editedCard.getCardType());
+//        response.setCardholderName(editedCard.getCardholderName());
+//        response.setExpirationMonth(editedCard.getExpirationMonth());
+//        response.setExpirationYear(editedCard.getExpirationYear());
+//        response.setCardId(editedCard.getId());
+//        return response;
+//    }
 
-        response.setCardType(editedCard.getCardType());
-        response.setCardholderName(editedCard.getCardholderName());
-        response.setExpirationMonth(editedCard.getExpirationMonth());
-        response.setExpirationYear(editedCard.getExpirationYear());
-        response.setCardId(editedCard.getId());
-        return response;
-    }
-
-    public static GetCreditCardInfoResponse mapResponseTo(CreditCardInfo savedCard) {
+    public static GetCreditCardInfoResponse map(CreditCardInfo savedCard) {
         GetCreditCardInfoResponse response = new GetCreditCardInfoResponse();
         response.setId(savedCard.getId());
         response.setCardholderName(savedCard.getCardholderName());
+        response.setCardType(savedCard.getCardType());
         response.setExpirationMonth(savedCard.getExpirationMonth());
         response.setExpirationYear(savedCard.getExpirationYear());
         return response;

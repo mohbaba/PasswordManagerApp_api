@@ -161,8 +161,38 @@ public class UserController {
     @PostMapping("/edit_credit_card_information")
     public ResponseEntity<?> editCreditCardInfo(@RequestBody EditGetCardInfoRequest editGetCardInfoRequest){
         try {
-            EditCreditCardInfoResponse response =
+            GetCreditCardInfoResponse response =
                     userServices.editCreditCardInfo(editGetCardInfoRequest);
+            return new ResponseEntity<>(new ApiResponse(true,response),CREATED);
+        }catch (PasswordManagerException error){
+            return new ResponseEntity<>(new ApiResponse(false, error.getMessage()), BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/count_number_of_saved_identity_info_for/{username}")
+    public ResponseEntity<?> countIdentityInfoFor(@PathVariable("username") String username){
+        try {
+            long response = userServices.countIdentityInfoFor(username);
+            return new ResponseEntity<>(new ApiResponse(true,response),CREATED);
+        }catch (PasswordManagerException error){
+            return new ResponseEntity<>(new ApiResponse(false, error.getMessage()), BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/count_number_of_saved_login_info_for/{username}")
+    public ResponseEntity<?> countLoginInfoFor(@PathVariable("username") String username){
+        try {
+            long response = userServices.countLoginInfoFor(username);
+            return new ResponseEntity<>(new ApiResponse(true,response),CREATED);
+        }catch (PasswordManagerException error){
+            return new ResponseEntity<>(new ApiResponse(false, error.getMessage()), BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/count_number_of_saved_credit_card_info_for/{username}")
+    public ResponseEntity<?> countCreditCardInfoFor(@PathVariable("username") String username){
+        try {
+            long response = userServices.countCreditCardInfoFor(username);
             return new ResponseEntity<>(new ApiResponse(true,response),CREATED);
         }catch (PasswordManagerException error){
             return new ResponseEntity<>(new ApiResponse(false, error.getMessage()), BAD_REQUEST);

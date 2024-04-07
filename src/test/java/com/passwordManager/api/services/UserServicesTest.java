@@ -346,7 +346,7 @@ class UserServicesTest {
 
         DeleteCardInfoRequest deleteCardInfoRequest = new DeleteCardInfoRequest();
         deleteCardInfoRequest.setCardId(id);
-        deleteCardInfoRequest.setUser("feyi");
+        deleteCardInfoRequest.setUsername("feyi");
         userServices.deleteCreditCardInfo(deleteCardInfoRequest);
         assertEquals(0,userServices.countCreditCardInfoFor("feyi"));
 
