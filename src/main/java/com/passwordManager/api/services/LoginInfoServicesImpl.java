@@ -25,6 +25,7 @@ public class LoginInfoServicesImpl implements LoginInfoServices{
     public Login addLogin(LoginInfoRequest loginInfoRequest) {
         checkPassword(loginInfoRequest);
         Login login = map(loginInfoRequest);
+        login.setSavedPassword(encrypt(loginInfoRequest.getPasswordToBeSaved()));
         checkLogin(login);
         return loginRepository.save(login);
     }

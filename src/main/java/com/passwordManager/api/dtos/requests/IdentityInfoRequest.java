@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class IdentityInfoRequest {
-    private String user;
+    private String username;
     private String firstName;
     private String middleName;
     private String lastName;

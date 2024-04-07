@@ -54,19 +54,49 @@ public class Mapper {
         return loginInfoResponse;
     }
 
-    public static GetLoginInfoResponse mapToResponse(Login login){
-        GetLoginInfoResponse getLoginInfoResponse = new GetLoginInfoResponse();
+    public static GetLoginInfoResponse mapToResponse(Login login, GetLoginInfoResponse getLoginInfoResponse){
         getLoginInfoResponse.setSavedUsername(login.getSavedUsername());
-        getLoginInfoResponse.setSavedPassword(decrypt(login.getSavedPassword()));
         getLoginInfoResponse.setSavedWebsite(login.getWebsite());
         return getLoginInfoResponse;
 
     }
 
+    public static IdentityInfoResponse mapResponse(Identity savedIdentity, User user) {
+        IdentityInfoResponse identityInfoResponse = new IdentityInfoResponse();
+        identityInfoResponse.setId(savedIdentity.getId());
+        identityInfoResponse.setFirstName(savedIdentity.getFirstName());
+        identityInfoResponse.setMiddleName(savedIdentity.getMiddleName());
+        identityInfoResponse.setLastName(savedIdentity.getLastName());
+        identityInfoResponse.setUsername(user.getUsername());
+        identityInfoResponse.setSuccessfullyAddedNiN(true);
+        return identityInfoResponse;
+    }
+
+    public static GetIdentityInfoResponse mapResponse(Identity savedIdentity) {
+        GetIdentityInfoResponse response = new GetIdentityInfoResponse();
+        response.setAddress(savedIdentity.getAddress());
+        response.setId(savedIdentity.getId());
+        response.setFirstName(savedIdentity.getFirstName());
+        response.setMiddleName(savedIdentity.getMiddleName());
+        response.setLastName(savedIdentity.getLastName());
+        return response;
+    }
+
+    public static CreditCardInfoResponse mapResponse(CreditCardInfo creditCard, User user) {
+        CreditCardInfoResponse creditCardInfoResponse = new CreditCardInfoResponse();
+        creditCardInfoResponse.setCardId(creditCard.getId());
+        creditCardInfoResponse.setCardholderName(creditCard.getCardholderName());
+        creditCardInfoResponse.setUsername(user.getUsername());
+        creditCardInfoResponse.setExpirationMonth(creditCard.getExpirationMonth());
+        creditCardInfoResponse.setExpirationYear(creditCard.getExpirationYear());
+        creditCardInfoResponse.setCardType(creditCard.getCardType());
+        return creditCardInfoResponse;
+    }
+
     public static Login map(LoginInfoRequest loginInfoRequest) {
         Login login = new Login();
         login.setSavedUsername(loginInfoRequest.getUsernameToBeSaved());
-        login.setSavedPassword(encrypt(loginInfoRequest.getPasswordToBeSaved()));
+//        login.setSavedPassword(encrypt(loginInfoRequest.getPasswordToBeSaved()));
         login.setWebsite(loginInfoRequest.getWebsite());
         return login;
     }
@@ -77,29 +107,58 @@ public class Mapper {
         identity.setLastName(identityInfoRequest.getLastName());
         identity.setAddress(identityInfoRequest.getAddress());
         identity.setNationalIdentityNumber(identityInfoRequest.getNationalIdentityNumber());
-        identity.setPassportNumber(identityInfoRequest.getPassportNumber());
         return identity;
     }
 
-    public static Identity map(EditIdentityInfoRequest editIdentityInfoRequest,Optional<Identity> identity) {
-        Identity foundIdentity = identity.get();
-        foundIdentity.setPassportNumber(editIdentityInfoRequest.getPassportNumber());
-        foundIdentity.setNationalIdentityNumber(editIdentityInfoRequest.getNationalIdentityNumber());
-        foundIdentity.setFirstName(editIdentityInfoRequest.getFirstName());
-        foundIdentity.setLastName(editIdentityInfoRequest.getLastName());
-        foundIdentity.setMiddleName(editIdentityInfoRequest.getMiddleName());
-        foundIdentity.setAddress(editIdentityInfoRequest.getAddress());
+    public static Identity map(EditIdentityInfoRequest editIdentityInfoRequest,Identity foundIdentity) {
+        if (editIdentityInfoRequest.getNationalIdentityNumber() != null)foundIdentity.setNationalIdentityNumber(editIdentityInfoRequest.getNationalIdentityNumber());
+        if (editIdentityInfoRequest.getFirstName() != null)foundIdentity.setFirstName(editIdentityInfoRequest.getFirstName());
+        if (editIdentityInfoRequest.getLastName() != null)foundIdentity.setLastName(editIdentityInfoRequest.getLastName());
+        if (editIdentityInfoRequest.getMiddleName() != null)foundIdentity.setMiddleName(editIdentityInfoRequest.getMiddleName());
+        if (editIdentityInfoRequest.getAddress() != null)foundIdentity.setAddress(editIdentityInfoRequest.getAddress());
         return foundIdentity;
+    }
+
+    public static DeleteIdentityInfoResponse mapResponse() {
+        DeleteIdentityInfoResponse response = new DeleteIdentityInfoResponse();
+        response.setDeleted(true);
+        return response;
     }
 
     public static CreditCardInfo map(CreditCardInfoRequest creditCardInfoRequest) {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
         creditCardInfo.setCardholderName(creditCardInfoRequest.getCardholderName());
-        creditCardInfo.setCardNumber(encrypt(creditCardInfoRequest.getCardNumber()));
-        creditCardInfo.setCvv(encrypt(creditCardInfoRequest.getCvv()));
         creditCardInfo.setCardType(getCardType(creditCardInfoRequest.getCardNumber()));
         creditCardInfo.setExpirationMonth(getExpirationMonth(creditCardInfoRequest.getExpirationMonth()));
         creditCardInfo.setExpirationYear(getExpirationYear(creditCardInfoRequest.getExpirationYear()));
         return creditCardInfo;
+    }
+
+    public static EditCreditCardInfoResponse map(CreditCardInfo editedCard) {
+        EditCreditCardInfoResponse response = new EditCreditCardInfoResponse();
+
+        response.setCardType(editedCard.getCardType());
+        response.setCardholderName(editedCard.getCardholderName());
+        response.setExpirationMonth(editedCard.getExpirationMonth());
+        response.setExpirationYear(editedCard.getExpirationYear());
+        response.setCardId(editedCard.getId());
+        return response;
+    }
+
+    public static GetCreditCardInfoResponse mapResponseTo(CreditCardInfo savedCard) {
+        GetCreditCardInfoResponse response = new GetCreditCardInfoResponse();
+        response.setId(savedCard.getId());
+        response.setCardholderName(savedCard.getCardholderName());
+        response.setExpirationMonth(savedCard.getExpirationMonth());
+        response.setExpirationYear(savedCard.getExpirationYear());
+        return response;
+    }
+
+    public static CreditCardInfo map(EditGetCardInfoRequest editGetCardInfoRequest,
+                                     CreditCardInfo foundedCreditCardInfo) {
+        if (editGetCardInfoRequest.getCardholderName()!= null) foundedCreditCardInfo.setCardholderName(editGetCardInfoRequest.getCardholderName());
+        if (editGetCardInfoRequest.getExpirationMonth()!= 0) foundedCreditCardInfo.setExpirationMonth(getExpirationMonth(editGetCardInfoRequest.getExpirationMonth()));
+        if (editGetCardInfoRequest.getExpirationYear()!= 0) foundedCreditCardInfo.setExpirationYear(getExpirationYear(editGetCardInfoRequest.getExpirationYear()));
+        return foundedCreditCardInfo;
     }
 }

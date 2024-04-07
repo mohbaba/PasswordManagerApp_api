@@ -23,17 +23,23 @@ public interface UserServices {
     LoginInfoResponse editLoginInfo(EditLoginInfoRequest editLoginInfoRequest);
     GetLoginInfoResponse getLoginInfo(GetLoginInfoRequest getLoginInfoRequest);
 
-    void addIdentityInfo(IdentityInfoRequest identityInfoRequest);
+    IdentityInfoResponse addIdentityInfo(IdentityInfoRequest identityInfoRequest);
 
     long countIdentityInfoFor(String username);
 
-    void deleteIdentityInfo(DeleteIdentityInfoRequest deleteIdentityInfoRequest);
+    DeleteIdentityInfoResponse deleteIdentityInfo(DeleteIdentityInfoRequest deleteIdentityInfoRequest);
 
-    void editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest);
+    IdentityInfoResponse editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest);
 
-    void addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest);
+    CreditCardInfoResponse addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest);
 
     int countCreditCardInfoFor(String username);
 
-    void deleteCreditCardInfo(DeleteCardInfoRequest deleteCardInfoRequest);
+    DeleteCreditCardInfoResponse deleteCreditCardInfo(DeleteCardInfoRequest deleteCardInfoRequest);
+
+    GetIdentityInfoResponse getIdentityInfo(GetIdentityInfoRequest getIdentityInfoRequest);
+
+    GetCreditCardInfoResponse getCreditCardInfo(GetCardInfoRequest getCardInfoRequest);
+
+    EditCreditCardInfoResponse editCreditCardInfo(EditGetCardInfoRequest editGetCardInfoRequest);
 }

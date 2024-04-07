@@ -13,6 +13,5 @@ public class Identity {
     private String middleName;
     private String lastName;
     private String nationalIdentityNumber;
-    private String passportNumber;
     private String address;
 }

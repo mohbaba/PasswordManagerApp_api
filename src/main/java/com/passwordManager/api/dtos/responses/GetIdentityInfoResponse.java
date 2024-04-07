@@ -1,12 +1,10 @@
-package com.passwordManager.api.dtos.requests;
+package com.passwordManager.api.dtos.responses;
 
 import lombok.Data;
 
 @Data
-public class EditIdentityInfoRequest {
-    private String identityInfoId;
-    private String username;
-    private String password;
+public class GetIdentityInfoResponse {
+    private String id;
     private String firstName;
     private String middleName;
     private String lastName;

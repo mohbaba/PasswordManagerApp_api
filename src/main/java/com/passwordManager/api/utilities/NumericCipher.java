@@ -2,12 +2,14 @@ package com.passwordManager.api.utilities;
 
 public class NumericCipher {
     public static final String DIGITS = "0123456789";
-    public static String encrypt(int number, int shiftKey) {
+    public static String encrypt(int number) {
+        int shiftKey = 4;
         String numberString = Integer.toString(number);
         return getString(shiftKey, numberString);
     }
 
-    public static String encrypt(long number, int shiftKey) {
+    public static String encrypt(long number) {
+        int shiftKey = 4;
         String numberString = Long.toString(number);
         return getString(shiftKey, numberString);
     }
@@ -34,7 +36,8 @@ public class NumericCipher {
         return DIGITS.charAt(shiftedPosition);
     }
 
-    public static String decrypt(String encryptedNumber, int shiftKey) {
+    public static String decrypt(String encryptedNumber) {
+        int shiftKey = 4;
         StringBuilder decryptedNumberString = new StringBuilder();
 
         for (int i = 0; i < encryptedNumber.length(); i++) {

@@ -163,7 +163,7 @@ class UserServicesTest {
     public void addIdentityInfo_IdentityInfoIsAdded(){
         login();
         IdentityInfoRequest identityInfoRequest = new IdentityInfoRequest();
-        identityInfoRequest.setUser("feyi");
+        identityInfoRequest.setUsername("feyi");
         identityInfoRequest.setFirstName("Mohammad");
         identityInfoRequest.setLastName("Baba");
         identityInfoRequest.setMiddleName("Muhammad");
@@ -177,7 +177,7 @@ class UserServicesTest {
     public void addIdentityInfoWithIncorrectNiN_ThrowsExceptionTest(){
         login();
         IdentityInfoRequest identityInfoRequest = new IdentityInfoRequest();
-        identityInfoRequest.setUser("feyi");
+        identityInfoRequest.setUsername("feyi");
         identityInfoRequest.setFirstName("Mohammad");
         identityInfoRequest.setLastName("Baba");
         identityInfoRequest.setMiddleName("Muhammad");
@@ -189,7 +189,7 @@ class UserServicesTest {
     public void deleteIdentityInfo_IdentityInfoIsDeleted(){
         login();
         IdentityInfoRequest identityInfoRequest = new IdentityInfoRequest();
-        identityInfoRequest.setUser("feyi");
+        identityInfoRequest.setUsername("feyi");
         identityInfoRequest.setFirstName("Mohammad");
         identityInfoRequest.setLastName("Baba");
         identityInfoRequest.setMiddleName("Muhammad");
@@ -201,7 +201,7 @@ class UserServicesTest {
         String id = user.getIdentities().getFirst().getId();
         DeleteIdentityInfoRequest deleteIdentityInfoRequest = new DeleteIdentityInfoRequest();
         deleteIdentityInfoRequest.setIdentityInfoId(id);
-        deleteIdentityInfoRequest.setUser("feyi");
+        deleteIdentityInfoRequest.setUsername("feyi");
         userServices.deleteIdentityInfo(deleteIdentityInfoRequest);
         assertEquals(0,userServices.countIdentityInfoFor("feyi"));
 
@@ -211,7 +211,7 @@ class UserServicesTest {
     public void editIdentityInfo_IdentityInfoIsEditedTest(){
         login();
         IdentityInfoRequest identityInfoRequest = new IdentityInfoRequest();
-        identityInfoRequest.setUser("feyi");
+        identityInfoRequest.setUsername("feyi");
         identityInfoRequest.setFirstName("Mohammad");
         identityInfoRequest.setLastName("Baba");
         identityInfoRequest.setMiddleName("Muhammad");
@@ -223,7 +223,7 @@ class UserServicesTest {
 
         EditIdentityInfoRequest editIdentityInfoRequest = new EditIdentityInfoRequest();
         editIdentityInfoRequest.setIdentityInfoId(user.getIdentities().getFirst().getId());
-        editIdentityInfoRequest.setUser("feyi");
+        editIdentityInfoRequest.setUsername("feyi");
         editIdentityInfoRequest.setNationalIdentityNumber("11211111111");
         editIdentityInfoRequest.setFirstName("abike");
         userServices.editIdentityInfo(editIdentityInfoRequest);
@@ -239,7 +239,7 @@ class UserServicesTest {
     public void userLogsInAddWrongIdentityInfo_ThrowsExceptionTest(){
         login();
         IdentityInfoRequest identityInfoRequest = new IdentityInfoRequest();
-        identityInfoRequest.setUser("feyi");
+        identityInfoRequest.setUsername("feyi");
         identityInfoRequest.setFirstName("Mohammad");
         identityInfoRequest.setLastName("Baba");
         identityInfoRequest.setMiddleName("Muhammad");
@@ -258,7 +258,7 @@ class UserServicesTest {
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
         creditCardInfoRequest.setExpirationYear(2024);
-        creditCardInfoRequest.setUser("feyi");
+        creditCardInfoRequest.setUsername("feyi");
         userServices.addCreditCardInfo(creditCardInfoRequest);
         assertEquals(1,userServices.countCreditCardInfoFor("feyi"));
     }
@@ -272,7 +272,7 @@ class UserServicesTest {
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
         creditCardInfoRequest.setExpirationYear(2024);
-        creditCardInfoRequest.setUser("feyi");
+        creditCardInfoRequest.setUsername("feyi");
         assertThrows(InvalidCreditCardException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
     }
 
@@ -285,7 +285,7 @@ class UserServicesTest {
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
         creditCardInfoRequest.setExpirationYear(2024);
-        creditCardInfoRequest.setUser("feyi");
+        creditCardInfoRequest.setUsername("feyi");
         assertThrows(IncorrectCardDetailsException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
     }
 
@@ -298,7 +298,7 @@ class UserServicesTest {
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
         creditCardInfoRequest.setExpirationYear(2024);
-        creditCardInfoRequest.setUser("feyi");
+        creditCardInfoRequest.setUsername("feyi");
         assertThrows(IncorrectCardDetailsException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
     }
 
@@ -312,7 +312,7 @@ class UserServicesTest {
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
         creditCardInfoRequest.setExpirationYear(2024);
-        creditCardInfoRequest.setUser("feyi");
+        creditCardInfoRequest.setUsername("feyi");
         assertThrows(InvalidCreditCardException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
     }
 
@@ -325,7 +325,7 @@ class UserServicesTest {
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
         creditCardInfoRequest.setExpirationYear(2024);
-        creditCardInfoRequest.setUser("feyi");
+        creditCardInfoRequest.setUsername("feyi");
         assertThrows(IncorrectCardDetailsException.class,()->userServices.addCreditCardInfo(creditCardInfoRequest));
     }
 
@@ -338,7 +338,7 @@ class UserServicesTest {
         creditCardInfoRequest.setCardholderName("Muhammad Baba Muhammad");
         creditCardInfoRequest.setExpirationMonth(12);
         creditCardInfoRequest.setExpirationYear(2024);
-        creditCardInfoRequest.setUser("feyi");
+        creditCardInfoRequest.setUsername("feyi");
         userServices.addCreditCardInfo(creditCardInfoRequest);
 
         User user = userRepository.findByUsername("feyi");
