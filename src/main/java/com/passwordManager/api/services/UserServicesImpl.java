@@ -3,7 +3,28 @@ package com.passwordManager.api.services;
 import com.passwordManager.api.data.models.*;
 import com.passwordManager.api.data.repositories.UserRepository;
 import com.passwordManager.api.dtos.requests.*;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.CreditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.DeleteCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.EditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.GetCardInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.DeleteIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.GetIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.DeleteLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.EditLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.GetLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.LoginInfoRequest;
 import com.passwordManager.api.dtos.responses.*;
+import com.passwordManager.api.dtos.responses.creditCardResponses.CreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.creditCardResponses.DeleteCreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.creditCardResponses.GetCreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.DeleteIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.GetIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.IdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.DeleteLoginInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
 import com.passwordManager.api.exceptions.*;
 import com.passwordManager.api.utilities.Cipher;
 import com.passwordManager.api.utilities.NumericCipher;
@@ -140,29 +161,38 @@ public class UserServicesImpl implements UserServices{
 
 
     @Override
-    public IdentityInfoResponse editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest) {
-        if (editIdentityInfoRequest.getUsername() == null) throw new PasswordManagerException("You must provide a username");
+    public GetIdentityInfoResponse editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest) {
+        checkNullFields(editIdentityInfoRequest);
         checkUserLoggedIn(editIdentityInfoRequest.getUsername());
         User user = userRepository.findByUsername(editIdentityInfoRequest.getUsername());
         checkUserExists(user);
         authenticateUser(user,editIdentityInfoRequest.getPassword());
-
         return getIdentityInfoResponse(editIdentityInfoRequest, user);
     }
 
-    private IdentityInfoResponse getIdentityInfoResponse(EditIdentityInfoRequest editIdentityInfoRequest, User user) {
-        Identity editedIdentity = identityInfoServices.editIdentityInfo(editIdentityInfoRequest);
-        replaceIdentityInfo(user, editedIdentity);
-        User updatedUser = userRepository.save(user);
-
-        return mapResponse(editedIdentity, updatedUser);
+    private static void checkNullFields(EditIdentityInfoRequest editIdentityInfoRequest) {
+        if (editIdentityInfoRequest.getUsername() == null) throw new PasswordManagerException("You must provide a username");
+        if (editIdentityInfoRequest.getPassword() == null) throw new PasswordManagerException("You must provide a password");
     }
 
-    private static void replaceIdentityInfo(User user, Identity editedIdentity) {
+    private GetIdentityInfoResponse getIdentityInfoResponse(EditIdentityInfoRequest editIdentityInfoRequest, User user) {
+        Identity editedIdentity = identityInfoServices.editIdentityInfo(editIdentityInfoRequest);
+        replaceIdentityInfo(user, editedIdentity);
+        GetIdentityInfoResponse response = mapResponse(editedIdentity);
+        decryptIdentityInfo(response, editedIdentity);
+        return response;
+    }
+
+    private static void decryptIdentityInfo(GetIdentityInfoResponse response, Identity editedIdentity) {
+        response.setNationalIdentityNumber(NumericCipher.decrypt(editedIdentity.getNationalIdentityNumber()));
+    }
+
+    private void replaceIdentityInfo(User user, Identity editedIdentity) {
         List<Identity> userIdentities = user.getIdentities();
         userIdentities.removeIf(identity -> identity.getId().equals(editedIdentity.getId()));
         userIdentities.add(editedIdentity);
         user.setIdentities(userIdentities);
+        userRepository.save(user);
     }
 
     public GetIdentityInfoResponse getIdentityInfo(GetIdentityInfoRequest getIdentityInfoRequest){
@@ -187,7 +217,7 @@ public class UserServicesImpl implements UserServices{
 
     private static GetIdentityInfoResponse decryptIdentity(Identity savedIdentity) {
         GetIdentityInfoResponse response = mapResponse(savedIdentity);
-        response.setNationalIdentityNumber(NumericCipher.decrypt(savedIdentity.getNationalIdentityNumber()));
+        decryptIdentityInfo(response, savedIdentity);
         return response;
     }
 
@@ -200,15 +230,16 @@ public class UserServicesImpl implements UserServices{
 
         CreditCardInfo creditCard = creditCardInfoServices.addCreditCardInfo(creditCardInfoRequest);
         addCreditCardInfoTo(user, creditCard);
-        userRepository.save(user);
+
 
         return mapResponse(creditCard, user);
     }
 
-    private static void addCreditCardInfoTo(User user, CreditCardInfo creditCard) {
+    private void addCreditCardInfoTo(User user, CreditCardInfo creditCard) {
         List<CreditCardInfo> userCardDetails = user.getCreditCardDetails();
         userCardDetails.add(creditCard);
         user.setCreditCardDetails(userCardDetails);
+        userRepository.save(user);
     }
 
     @Override
@@ -226,13 +257,13 @@ public class UserServicesImpl implements UserServices{
     }
 
     @Override
-    public GetCreditCardInfoResponse editCreditCardInfo(EditGetCardInfoRequest editGetCardInfoRequest){
-        checkUserLoggedIn(editGetCardInfoRequest.getUsername());
-        User user = userRepository.findByUsername(editGetCardInfoRequest.getUsername());
+    public GetCreditCardInfoResponse editCreditCardInfo(EditCardInfoRequest editCardInfoRequest){
+        checkUserLoggedIn(editCardInfoRequest.getUsername());
+        User user = userRepository.findByUsername(editCardInfoRequest.getUsername());
         checkUserExists(user);
-        authenticateUser(user,editGetCardInfoRequest.getPassword());
+        authenticateUser(user, editCardInfoRequest.getPassword());
 
-        CreditCardInfo editedCard = creditCardInfoServices.editCreditCardInfo(editGetCardInfoRequest);
+        CreditCardInfo editedCard = creditCardInfoServices.editCreditCardInfo(editCardInfoRequest);
         replaceCardInfo(user, editedCard);
         userRepository.save(user);
 

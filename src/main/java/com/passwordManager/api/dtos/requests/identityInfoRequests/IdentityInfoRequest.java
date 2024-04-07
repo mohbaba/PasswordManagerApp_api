@@ -1,4 +1,4 @@
-package com.passwordManager.api.dtos.requests;
+package com.passwordManager.api.dtos.requests.identityInfoRequests;
 
 import lombok.Data;
 
@@ -8,7 +8,13 @@ public class IdentityInfoRequest {
     private String firstName;
     private String middleName;
     private String lastName;
+
     private String nationalIdentityNumber;
+
     private String passportNumber;
     private String address;
+
+    public void setNationalIdentityNumber(String nationalIdentityNumber) {
+        this.nationalIdentityNumber = nationalIdentityNumber.replace(" ", "");
+    }
 }

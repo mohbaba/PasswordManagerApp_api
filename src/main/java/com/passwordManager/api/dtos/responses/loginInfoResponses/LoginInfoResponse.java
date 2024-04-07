@@ -1,4 +1,4 @@
-package com.passwordManager.api.dtos.responses;
+package com.passwordManager.api.dtos.responses.loginInfoResponses;
 
 import lombok.Data;
 
@@ -6,7 +6,6 @@ import lombok.Data;
 public class LoginInfoResponse {
     private String id;
     private boolean successfullyAdded;
-//    private String savedPassword;
     private String savedUsername;
     private String savedWebsite;
 }

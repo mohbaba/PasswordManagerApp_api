@@ -3,11 +3,12 @@ package com.passwordManager.api.services;
 
 import com.passwordManager.api.data.models.Identity;
 import com.passwordManager.api.data.repositories.IdentityRepository;
-import com.passwordManager.api.dtos.requests.DeleteIdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.EditIdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.GetIdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.IdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.DeleteIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.GetIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
 import com.passwordManager.api.exceptions.*;
+import com.passwordManager.api.utilities.NumericCipher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +23,10 @@ public class IdentityInfoServicesImpl implements IdentityInfoServices{
     private IdentityRepository identityRepository;
     @Override
     public Identity addIdentityInfo(IdentityInfoRequest identityInfoRequest) {
-        validate(identityInfoRequest.getNationalIdentityNumber());
+        validate(identityInfoRequest.getNationalIdentityNumber().replace(" ", ""));
         if (identityInfoRequest.getNationalIdentityNumber().length() != 11)throw new InvalidNiNException("NIN number must contain 11 digits");
         Identity identity = map(identityInfoRequest);
-        if (identityInfoRequest.getNationalIdentityNumber() != null)identity.setNationalIdentityNumber(encrypt(Long.parseLong(identityInfoRequest.getNationalIdentityNumber())));
+        if (identityInfoRequest.getNationalIdentityNumber() != null)identity.setNationalIdentityNumber(NumericCipher.encrypt(Long.parseLong(identityInfoRequest.getNationalIdentityNumber())));
         return identityRepository.save(identity);
     }
 

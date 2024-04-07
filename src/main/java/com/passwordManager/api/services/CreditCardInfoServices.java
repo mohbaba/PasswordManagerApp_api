@@ -1,10 +1,10 @@
 package com.passwordManager.api.services;
 
 import com.passwordManager.api.data.models.CreditCardInfo;
-import com.passwordManager.api.dtos.requests.CreditCardInfoRequest;
-import com.passwordManager.api.dtos.requests.DeleteCardInfoRequest;
-import com.passwordManager.api.dtos.requests.EditGetCardInfoRequest;
-import com.passwordManager.api.dtos.requests.GetCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.CreditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.DeleteCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.EditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.GetCardInfoRequest;
 
 public interface CreditCardInfoServices {
     CreditCardInfo addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest);
@@ -13,5 +13,5 @@ public interface CreditCardInfoServices {
 
     CreditCardInfo getCreditCardInfo(GetCardInfoRequest getCardInfoRequest);
 
-    CreditCardInfo editCreditCardInfo(EditGetCardInfoRequest editGetCardInfoRequest);
+    CreditCardInfo editCreditCardInfo(EditCardInfoRequest editCardInfoRequest);
 }

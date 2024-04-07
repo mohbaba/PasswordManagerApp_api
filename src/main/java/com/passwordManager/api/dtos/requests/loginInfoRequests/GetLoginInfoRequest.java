@@ -1,10 +1,11 @@
-package com.passwordManager.api.dtos.requests;
+package com.passwordManager.api.dtos.requests.loginInfoRequests;
 
 import lombok.Data;
 
 @Data
-public class DeleteLoginInfoRequest {
+public class GetLoginInfoRequest {
     private String loginInfoId;
     private String username;
     private String password;
+
 }

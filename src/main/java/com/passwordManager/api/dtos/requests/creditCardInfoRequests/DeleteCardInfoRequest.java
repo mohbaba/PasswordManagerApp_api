@@ -1,4 +1,4 @@
-package com.passwordManager.api.dtos.requests;
+package com.passwordManager.api.dtos.requests.creditCardInfoRequests;
 
 import lombok.Data;
 

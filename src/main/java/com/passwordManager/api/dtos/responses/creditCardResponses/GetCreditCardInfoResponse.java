@@ -1,9 +1,7 @@
-package com.passwordManager.api.dtos.responses;
+package com.passwordManager.api.dtos.responses.creditCardResponses;
 
 import com.passwordManager.api.data.models.CreditCardType;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Data
 public class GetCreditCardInfoResponse {
@@ -12,6 +10,6 @@ public class GetCreditCardInfoResponse {
     private String cardNumber;
     private String cvv;
     private CreditCardType cardType;
-    private LocalDate expirationMonth;
-    private LocalDate expirationYear;
+    private int expirationMonth;
+    private int expirationYear;
 }

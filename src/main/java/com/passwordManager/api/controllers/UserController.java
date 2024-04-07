@@ -2,7 +2,28 @@ package com.passwordManager.api.controllers;
 
 
 import com.passwordManager.api.dtos.requests.*;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.CreditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.DeleteCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.EditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.GetCardInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.DeleteIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.GetIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.DeleteLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.EditLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.GetLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.LoginInfoRequest;
 import com.passwordManager.api.dtos.responses.*;
+import com.passwordManager.api.dtos.responses.creditCardResponses.CreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.creditCardResponses.DeleteCreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.creditCardResponses.GetCreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.DeleteIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.GetIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.IdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.DeleteLoginInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
 import com.passwordManager.api.exceptions.PasswordManagerException;
 import com.passwordManager.api.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +131,8 @@ public class UserController {
     @PutMapping("/edit_identity_information")
     public ResponseEntity<?> getIdentityInfo(@RequestBody EditIdentityInfoRequest editIdentityInfoRequest){
         try {
-            IdentityInfoResponse response = userServices.editIdentityInfo(editIdentityInfoRequest);
+            GetIdentityInfoResponse response =
+                    userServices.editIdentityInfo(editIdentityInfoRequest);
             return new ResponseEntity<>(new ApiResponse(true,response),CREATED);
         }catch (PasswordManagerException error){
             return new ResponseEntity<>(new ApiResponse(false, error.getMessage()), BAD_REQUEST);
@@ -159,10 +181,10 @@ public class UserController {
     }
 
     @PostMapping("/edit_credit_card_information")
-    public ResponseEntity<?> editCreditCardInfo(@RequestBody EditGetCardInfoRequest editGetCardInfoRequest){
+    public ResponseEntity<?> editCreditCardInfo(@RequestBody EditCardInfoRequest editCardInfoRequest){
         try {
             GetCreditCardInfoResponse response =
-                    userServices.editCreditCardInfo(editGetCardInfoRequest);
+                    userServices.editCreditCardInfo(editCardInfoRequest);
             return new ResponseEntity<>(new ApiResponse(true,response),CREATED);
         }catch (PasswordManagerException error){
             return new ResponseEntity<>(new ApiResponse(false, error.getMessage()), BAD_REQUEST);

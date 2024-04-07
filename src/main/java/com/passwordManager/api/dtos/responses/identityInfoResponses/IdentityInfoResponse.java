@@ -1,4 +1,4 @@
-package com.passwordManager.api.dtos.responses;
+package com.passwordManager.api.dtos.responses.identityInfoResponses;
 
 import lombok.Data;
 

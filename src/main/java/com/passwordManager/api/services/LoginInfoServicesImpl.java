@@ -2,10 +2,10 @@ package com.passwordManager.api.services;
 
 import com.passwordManager.api.data.models.Login;
 import com.passwordManager.api.data.repositories.LoginRepository;
-import com.passwordManager.api.dtos.requests.DeleteLoginInfoRequest;
-import com.passwordManager.api.dtos.requests.EditLoginInfoRequest;
-import com.passwordManager.api.dtos.requests.GetLoginInfoRequest;
-import com.passwordManager.api.dtos.requests.LoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.DeleteLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.EditLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.GetLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.LoginInfoRequest;
 import com.passwordManager.api.exceptions.IncorrectPasswordException;
 import com.passwordManager.api.exceptions.LoginInfoNotFoundException;
 import com.passwordManager.api.exceptions.UnauthorizedSaveException;

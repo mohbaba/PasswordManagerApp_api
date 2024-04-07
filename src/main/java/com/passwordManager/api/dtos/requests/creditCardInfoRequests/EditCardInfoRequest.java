@@ -1,12 +1,9 @@
-package com.passwordManager.api.dtos.requests;
+package com.passwordManager.api.dtos.requests.creditCardInfoRequests;
 
-import com.passwordManager.api.data.models.CreditCardType;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
-public class EditGetCardInfoRequest {
+public class EditCardInfoRequest {
     private String cardId;
     private String username;
     private String password;
@@ -15,4 +12,9 @@ public class EditGetCardInfoRequest {
     private String cvv;
     private int expirationMonth;
     private int expirationYear;
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber.replaceAll("\\s", "");
+    }
+
 }

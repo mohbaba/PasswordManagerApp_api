@@ -1,7 +1,28 @@
 package com.passwordManager.api.services;
 
 import com.passwordManager.api.dtos.requests.*;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.CreditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.DeleteCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.EditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.GetCardInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.DeleteIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.GetIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.DeleteLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.EditLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.GetLoginInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.LoginInfoRequest;
 import com.passwordManager.api.dtos.responses.*;
+import com.passwordManager.api.dtos.responses.creditCardResponses.CreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.creditCardResponses.DeleteCreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.creditCardResponses.GetCreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.DeleteIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.GetIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.IdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.DeleteLoginInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
 
 public interface UserServices {
     RegisterUserResponse register(RegisterUserRequest registerUserRequest);
@@ -29,7 +50,7 @@ public interface UserServices {
 
     DeleteIdentityInfoResponse deleteIdentityInfo(DeleteIdentityInfoRequest deleteIdentityInfoRequest);
 
-    IdentityInfoResponse editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest);
+    GetIdentityInfoResponse editIdentityInfo(EditIdentityInfoRequest editIdentityInfoRequest);
 
     CreditCardInfoResponse addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest);
 
@@ -41,5 +62,5 @@ public interface UserServices {
 
     GetCreditCardInfoResponse getCreditCardInfo(GetCardInfoRequest getCardInfoRequest);
 
-    GetCreditCardInfoResponse editCreditCardInfo(EditGetCardInfoRequest editGetCardInfoRequest);
+    GetCreditCardInfoResponse editCreditCardInfo(EditCardInfoRequest editCardInfoRequest);
 }

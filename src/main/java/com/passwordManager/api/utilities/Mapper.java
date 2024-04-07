@@ -2,9 +2,19 @@ package com.passwordManager.api.utilities;
 
 import com.passwordManager.api.data.models.*;
 import com.passwordManager.api.dtos.requests.*;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.CreditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.EditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.loginInfoRequests.LoginInfoRequest;
 import com.passwordManager.api.dtos.responses.*;
-
-import java.util.Optional;
+import com.passwordManager.api.dtos.responses.creditCardResponses.CreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.creditCardResponses.GetCreditCardInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.DeleteIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.GetIdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.identityInfoResponses.IdentityInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
+import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
 
 import static com.passwordManager.api.utilities.Cipher.decrypt;
 import static com.passwordManager.api.utilities.Cipher.encrypt;
@@ -87,8 +97,8 @@ public class Mapper {
         creditCardInfoResponse.setCardId(creditCard.getId());
         creditCardInfoResponse.setCardholderName(creditCard.getCardholderName());
         creditCardInfoResponse.setUsername(user.getUsername());
-        creditCardInfoResponse.setExpirationMonth(creditCard.getExpirationMonth());
-        creditCardInfoResponse.setExpirationYear(creditCard.getExpirationYear());
+        creditCardInfoResponse.setExpirationMonth(creditCard.getExpiryMonth());
+        creditCardInfoResponse.setExpirationYear(creditCard.getExpiryYear());
         creditCardInfoResponse.setCardType(creditCard.getCardType());
         return creditCardInfoResponse;
     }
@@ -106,11 +116,10 @@ public class Mapper {
         identity.setMiddleName(identityInfoRequest.getMiddleName());
         identity.setLastName(identityInfoRequest.getLastName());
         identity.setAddress(identityInfoRequest.getAddress());
-        identity.setNationalIdentityNumber(identityInfoRequest.getNationalIdentityNumber());
         return identity;
     }
 
-    public static Identity map(EditIdentityInfoRequest editIdentityInfoRequest,Identity foundIdentity) {
+    public static Identity map(EditIdentityInfoRequest editIdentityInfoRequest, Identity foundIdentity) {
         if (editIdentityInfoRequest.getNationalIdentityNumber() != null)foundIdentity.setNationalIdentityNumber(editIdentityInfoRequest.getNationalIdentityNumber());
         if (editIdentityInfoRequest.getFirstName() != null)foundIdentity.setFirstName(editIdentityInfoRequest.getFirstName());
         if (editIdentityInfoRequest.getLastName() != null)foundIdentity.setLastName(editIdentityInfoRequest.getLastName());
@@ -129,37 +138,27 @@ public class Mapper {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
         creditCardInfo.setCardholderName(creditCardInfoRequest.getCardholderName());
         creditCardInfo.setCardType(getCardType(creditCardInfoRequest.getCardNumber()));
-        creditCardInfo.setExpirationMonth(getExpirationMonth(creditCardInfoRequest.getExpirationMonth()));
-        creditCardInfo.setExpirationYear(getExpirationYear(creditCardInfoRequest.getExpirationYear()));
+        creditCardInfo.setExpiryMonth(getExpirationMonth(creditCardInfoRequest.getExpirationMonth()));
+        creditCardInfo.setExpiryYear(getExpirationYear(creditCardInfoRequest.getExpirationYear()));
         return creditCardInfo;
     }
 
-//    public static EditCreditCardInfoResponse map(CreditCardInfo editedCard) {
-//        EditCreditCardInfoResponse response = new EditCreditCardInfoResponse();
-//
-//        response.setCardType(editedCard.getCardType());
-//        response.setCardholderName(editedCard.getCardholderName());
-//        response.setExpirationMonth(editedCard.getExpirationMonth());
-//        response.setExpirationYear(editedCard.getExpirationYear());
-//        response.setCardId(editedCard.getId());
-//        return response;
-//    }
+
 
     public static GetCreditCardInfoResponse map(CreditCardInfo savedCard) {
         GetCreditCardInfoResponse response = new GetCreditCardInfoResponse();
         response.setId(savedCard.getId());
         response.setCardholderName(savedCard.getCardholderName());
         response.setCardType(savedCard.getCardType());
-        response.setExpirationMonth(savedCard.getExpirationMonth());
-        response.setExpirationYear(savedCard.getExpirationYear());
+        response.setExpirationMonth(getExpirationMonth(savedCard.getExpiryMonth()));
+        response.setExpirationYear(getExpirationYear(savedCard.getExpiryYear()));
         return response;
     }
 
-    public static CreditCardInfo map(EditGetCardInfoRequest editGetCardInfoRequest,
-                                     CreditCardInfo foundedCreditCardInfo) {
-        if (editGetCardInfoRequest.getCardholderName()!= null) foundedCreditCardInfo.setCardholderName(editGetCardInfoRequest.getCardholderName());
-        if (editGetCardInfoRequest.getExpirationMonth()!= 0) foundedCreditCardInfo.setExpirationMonth(getExpirationMonth(editGetCardInfoRequest.getExpirationMonth()));
-        if (editGetCardInfoRequest.getExpirationYear()!= 0) foundedCreditCardInfo.setExpirationYear(getExpirationYear(editGetCardInfoRequest.getExpirationYear()));
+    public static CreditCardInfo map(EditCardInfoRequest editCardInfoRequest, CreditCardInfo foundedCreditCardInfo) {
+        if (editCardInfoRequest.getCardholderName()!= null) foundedCreditCardInfo.setCardholderName(editCardInfoRequest.getCardholderName());
+        if (editCardInfoRequest.getExpirationMonth()!= 0) foundedCreditCardInfo.setExpiryMonth(getExpirationMonth(editCardInfoRequest.getExpirationMonth()));
+        if (editCardInfoRequest.getExpirationYear()!= 0) foundedCreditCardInfo.setExpiryYear(getExpirationYear(editCardInfoRequest.getExpirationYear()));
         return foundedCreditCardInfo;
     }
 }

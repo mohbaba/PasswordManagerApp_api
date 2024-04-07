@@ -2,10 +2,10 @@ package com.passwordManager.api.services;
 
 import com.passwordManager.api.data.models.CreditCardInfo;
 import com.passwordManager.api.data.repositories.CardRepository;
-import com.passwordManager.api.dtos.requests.CreditCardInfoRequest;
-import com.passwordManager.api.dtos.requests.DeleteCardInfoRequest;
-import com.passwordManager.api.dtos.requests.EditGetCardInfoRequest;
-import com.passwordManager.api.dtos.requests.GetCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.CreditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.DeleteCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.EditCardInfoRequest;
+import com.passwordManager.api.dtos.requests.creditCardInfoRequests.GetCardInfoRequest;
 import com.passwordManager.api.exceptions.CreditCardInfoNotFoundException;
 import com.passwordManager.api.exceptions.FieldRequiredException;
 import com.passwordManager.api.exceptions.IncorrectCardDetailsException;
@@ -18,8 +18,6 @@ import java.util.Optional;
 
 import static com.passwordManager.api.utilities.CreditCardValidator.*;
 import static com.passwordManager.api.utilities.Mapper.map;
-import static com.passwordManager.api.utilities.Utils.getExpirationMonth;
-import static com.passwordManager.api.utilities.Utils.getExpirationYear;
 
 @Service
 public class CreditCardInfoServicesImpl implements CreditCardInfoServices{
@@ -29,8 +27,8 @@ public class CreditCardInfoServicesImpl implements CreditCardInfoServices{
     public CreditCardInfo addCreditCardInfo(CreditCardInfoRequest creditCardInfoRequest) {
         if (creditCardInfoRequest.getCardNumber() == null)throw new FieldRequiredException("Card " +
                 "number required");
-        validateCard(creditCardInfoRequest.getCardNumber());
-        validateCvv(creditCardInfoRequest.getCvv());
+        validateCard(creditCardInfoRequest.getCardNumber().replaceAll("\\s ", ""));
+        validateCvv(creditCardInfoRequest.getCvv().replaceAll("\\s", ""));
         CreditCardInfo creditCardInfo = map(creditCardInfoRequest);
         creditCardInfo.setCvv(NumericCipher.encrypt(Integer.parseInt(creditCardInfoRequest.getCvv())));
         creditCardInfo.setCardNumber(NumericCipher.encrypt(Long.parseLong(creditCardInfoRequest.getCardNumber())));
@@ -54,30 +52,35 @@ public class CreditCardInfoServicesImpl implements CreditCardInfoServices{
     }
 
     @Override
-    public CreditCardInfo editCreditCardInfo(EditGetCardInfoRequest editGetCardInfoRequest) {
-        if (editGetCardInfoRequest.getCardId() == null) throw new FieldRequiredException("Card Id" +
+    public CreditCardInfo editCreditCardInfo(EditCardInfoRequest editCardInfoRequest) {
+        if (editCardInfoRequest.getCardId() == null) throw new FieldRequiredException("Card Id" +
                 " not specified");
-        Optional<CreditCardInfo> creditCardInfo = cardRepository.findById(editGetCardInfoRequest.getCardId());
+        Optional<CreditCardInfo> creditCardInfo = cardRepository.findById(editCardInfoRequest.getCardId());
         if (creditCardInfo.isEmpty())throw new CreditCardInfoNotFoundException(String.format(
-                "Credit card info with id: %s not found", editGetCardInfoRequest.getCardId()));
-        CreditCardInfo foundedCreditCardInfo = map(editGetCardInfoRequest,creditCardInfo.get());
+                "Credit card info with id: %s not found", editCardInfoRequest.getCardId()));
+        CreditCardInfo foundedCreditCardInfo = map(editCardInfoRequest,creditCardInfo.get());
+        addDetailsToCard(editCardInfoRequest, foundedCreditCardInfo);
 
-        encryptSensitiveInfo(editGetCardInfoRequest, foundedCreditCardInfo);
+        encryptSensitiveInfo(editCardInfoRequest, foundedCreditCardInfo);
 
 
         return cardRepository.save(foundedCreditCardInfo);
     }
 
-    private void encryptSensitiveInfo(EditGetCardInfoRequest editGetCardInfoRequest, CreditCardInfo foundedCreditCardInfo) {
-        if (editGetCardInfoRequest.getCardNumber()!= null) {
-            validateCard(editGetCardInfoRequest.getCardNumber());
-            foundedCreditCardInfo.setCardNumber(NumericCipher.encrypt(Long.parseLong(editGetCardInfoRequest.getCardNumber())));
-            foundedCreditCardInfo.setCardType(getCardType(editGetCardInfoRequest.getCardNumber()));
+    private void addDetailsToCard(EditCardInfoRequest editCardInfoRequest, CreditCardInfo foundedCreditCardInfo) {
+        if (editCardInfoRequest.getCardNumber() != null){
+            validateCard(editCardInfoRequest.getCardNumber());
+            foundedCreditCardInfo.setCardNumber(NumericCipher.encrypt(Long.parseLong(editCardInfoRequest.getCardNumber())));
+            foundedCreditCardInfo.setCardType(getCardType(editCardInfoRequest.getCardNumber()));
         }
-        if (editGetCardInfoRequest.getCvv()!= null) {
-            validateCvv(editGetCardInfoRequest.getCvv());
-            foundedCreditCardInfo.setCvv(NumericCipher.encrypt(Integer.parseInt(editGetCardInfoRequest.getCvv())));
+        if (editCardInfoRequest.getCvv()!= null){
+            validateCvv(editCardInfoRequest.getCvv());
+            foundedCreditCardInfo.setCvv(NumericCipher.encrypt(Integer.parseInt(editCardInfoRequest.getCvv())));
         }
+    }
+
+    private void encryptSensitiveInfo(EditCardInfoRequest editCardInfoRequest, CreditCardInfo foundedCreditCardInfo) {
+        addDetailsToCard(editCardInfoRequest, foundedCreditCardInfo);
     }
 
 
@@ -90,6 +93,7 @@ public class CreditCardInfoServicesImpl implements CreditCardInfoServices{
     }
 
     private void validateCard(String cardNumber){
+
         if (cardNumber == null)throw new InvalidCreditCardException(String.format("Input card " +
                 "number"));
         if (!lengthChecker(cardNumber))throw new IncorrectCardDetailsException(String.format("Invalid card" +

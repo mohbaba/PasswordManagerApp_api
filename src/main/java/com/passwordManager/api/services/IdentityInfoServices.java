@@ -1,10 +1,10 @@
 package com.passwordManager.api.services;
 
 import com.passwordManager.api.data.models.Identity;
-import com.passwordManager.api.dtos.requests.DeleteIdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.EditIdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.GetIdentityInfoRequest;
-import com.passwordManager.api.dtos.requests.IdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.DeleteIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.GetIdentityInfoRequest;
+import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
 
 public interface IdentityInfoServices {
 
