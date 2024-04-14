@@ -5,13 +5,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("Identities")
-public class Identity {
+@Document("User Login Details")
+public class LoginInfo {
     @Id
     private String id;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String nationalIdentityNumber;
-    private String address;
+    private String savedUsername;
+    private String savedPassword;
+    private String website;
 }

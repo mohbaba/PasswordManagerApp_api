@@ -1,6 +1,6 @@
 package com.passwordManager.api.services;
 
-import com.passwordManager.api.data.models.Login;
+import com.passwordManager.api.data.models.LoginInfo;
 import com.passwordManager.api.data.repositories.LoginRepository;
 import com.passwordManager.api.dtos.requests.loginInfoRequests.DeleteLoginInfoRequest;
 import com.passwordManager.api.dtos.requests.loginInfoRequests.EditLoginInfoRequest;
@@ -22,41 +22,41 @@ public class LoginInfoServicesImpl implements LoginInfoServices{
     @Autowired
     private LoginRepository loginRepository;
     @Override
-    public Login addLogin(LoginInfoRequest loginInfoRequest) {
+    public LoginInfo addLogin(LoginInfoRequest loginInfoRequest) {
         checkPassword(loginInfoRequest);
-        Login login = map(loginInfoRequest);
-        login.setSavedPassword(encrypt(loginInfoRequest.getPasswordToBeSaved()));
-        checkLogin(login);
-        return loginRepository.save(login);
+        LoginInfo loginInfo = map(loginInfoRequest);
+        loginInfo.setSavedPassword(encrypt(loginInfoRequest.getPasswordToBeSaved()));
+        checkLogin(loginInfo);
+        return loginRepository.save(loginInfo);
     }
 
     @Override
-    public Login deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest) {
+    public LoginInfo deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest) {
         return loginRepository.deleteLoginById(deleteLoginInfoRequest.getLoginInfoId());
     }
 
     @Override
-    public Login editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) {
+    public LoginInfo editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) {
         if (editLoginInfoRequest.getPostId() == null) throw new LoginInfoNotFoundException("Enter" +
                 " Id Of Login");
-        Optional<Login> login = loginRepository.findById(editLoginInfoRequest.getPostId());
+        Optional<LoginInfo> login = loginRepository.findById(editLoginInfoRequest.getPostId());
         if (login.isEmpty())
             throw new LoginInfoNotFoundException("Login info entered does not " +
                     "exist");
-        Login foundLogin = login.get();
-        if (editLoginInfoRequest.getNewPassword() != null)foundLogin.setSavedPassword(encrypt(editLoginInfoRequest.getNewPassword()));
-        if (editLoginInfoRequest.getNewUsername() != null)foundLogin.setSavedUsername(editLoginInfoRequest.getNewUsername());
+        LoginInfo foundLoginInfo = login.get();
+        if (editLoginInfoRequest.getNewPassword() != null) foundLoginInfo.setSavedPassword(encrypt(editLoginInfoRequest.getNewPassword()));
+        if (editLoginInfoRequest.getNewUsername() != null) foundLoginInfo.setSavedUsername(editLoginInfoRequest.getNewUsername());
 
 
 
-        return loginRepository.save(foundLogin);
+        return loginRepository.save(foundLoginInfo);
     }
 
     @Override
-    public Login getLoginInfo(GetLoginInfoRequest getLoginInfoRequest) {
+    public LoginInfo getLoginInfo(GetLoginInfoRequest getLoginInfoRequest) {
         if (getLoginInfoRequest.getLoginInfoId() == null)throw new LoginInfoNotFoundException(
                 "Enter details to fetch login info");
-        Optional<Login> login = loginRepository.findById(getLoginInfoRequest.getLoginInfoId());
+        Optional<LoginInfo> login = loginRepository.findById(getLoginInfoRequest.getLoginInfoId());
         if (login.isEmpty())
             throw new LoginInfoNotFoundException("Login info entered does not " +
                     "exist");
@@ -71,7 +71,7 @@ public class LoginInfoServicesImpl implements LoginInfoServices{
                 "password cannot be blank");
     }
 
-    private void checkLogin(Login login){
-        if (login == null)throw new UnauthorizedSaveException("Action not permitted");
+    private void checkLogin(LoginInfo loginInfo){
+        if (loginInfo == null)throw new UnauthorizedSaveException("Action not permitted");
     }
 }

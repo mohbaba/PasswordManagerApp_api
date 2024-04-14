@@ -54,41 +54,41 @@ public class Mapper {
         return logoutUserResponse;
     }
 
-    public static LoginInfoResponse map(Login login){
+    public static LoginInfoResponse map(LoginInfo loginInfo){
         LoginInfoResponse loginInfoResponse = new LoginInfoResponse();
-        loginInfoResponse.setId(login.getId());
-        loginInfoResponse.setSavedUsername(login.getSavedUsername());
+        loginInfoResponse.setId(loginInfo.getId());
+        loginInfoResponse.setSavedUsername(loginInfo.getSavedUsername());
         loginInfoResponse.setSuccessfullyAdded(true);
 //        loginInfoResponse.setSavedPassword(decrypt(login.getSavedPassword()));
-        loginInfoResponse.setSavedWebsite(login.getWebsite());
+        loginInfoResponse.setSavedWebsite(loginInfo.getWebsite());
         return loginInfoResponse;
     }
 
-    public static GetLoginInfoResponse mapToResponse(Login login, GetLoginInfoResponse getLoginInfoResponse){
-        getLoginInfoResponse.setSavedUsername(login.getSavedUsername());
-        getLoginInfoResponse.setSavedWebsite(login.getWebsite());
+    public static GetLoginInfoResponse mapToResponse(LoginInfo loginInfo, GetLoginInfoResponse getLoginInfoResponse){
+        getLoginInfoResponse.setSavedUsername(loginInfo.getSavedUsername());
+        getLoginInfoResponse.setSavedWebsite(loginInfo.getWebsite());
         return getLoginInfoResponse;
 
     }
 
-    public static IdentityInfoResponse mapResponse(Identity savedIdentity, User user) {
+    public static IdentityInfoResponse mapResponse(IdentityInfo savedIdentityInfo, User user) {
         IdentityInfoResponse identityInfoResponse = new IdentityInfoResponse();
-        identityInfoResponse.setId(savedIdentity.getId());
-        identityInfoResponse.setFirstName(savedIdentity.getFirstName());
-        identityInfoResponse.setMiddleName(savedIdentity.getMiddleName());
-        identityInfoResponse.setLastName(savedIdentity.getLastName());
+        identityInfoResponse.setId(savedIdentityInfo.getId());
+        identityInfoResponse.setFirstName(savedIdentityInfo.getFirstName());
+        identityInfoResponse.setMiddleName(savedIdentityInfo.getMiddleName());
+        identityInfoResponse.setLastName(savedIdentityInfo.getLastName());
         identityInfoResponse.setUsername(user.getUsername());
         identityInfoResponse.setSuccessfullyAddedNiN(true);
         return identityInfoResponse;
     }
 
-    public static GetIdentityInfoResponse mapResponse(Identity savedIdentity) {
+    public static GetIdentityInfoResponse mapResponse(IdentityInfo savedIdentityInfo) {
         GetIdentityInfoResponse response = new GetIdentityInfoResponse();
-        response.setAddress(savedIdentity.getAddress());
-        response.setId(savedIdentity.getId());
-        response.setFirstName(savedIdentity.getFirstName());
-        response.setMiddleName(savedIdentity.getMiddleName());
-        response.setLastName(savedIdentity.getLastName());
+        response.setAddress(savedIdentityInfo.getAddress());
+        response.setId(savedIdentityInfo.getId());
+        response.setFirstName(savedIdentityInfo.getFirstName());
+        response.setMiddleName(savedIdentityInfo.getMiddleName());
+        response.setLastName(savedIdentityInfo.getLastName());
         return response;
     }
 
@@ -103,29 +103,29 @@ public class Mapper {
         return creditCardInfoResponse;
     }
 
-    public static Login map(LoginInfoRequest loginInfoRequest) {
-        Login login = new Login();
-        login.setSavedUsername(loginInfoRequest.getUsernameToBeSaved());
+    public static LoginInfo map(LoginInfoRequest loginInfoRequest) {
+        LoginInfo loginInfo = new LoginInfo();
+        loginInfo.setSavedUsername(loginInfoRequest.getUsernameToBeSaved());
 //        login.setSavedPassword(encrypt(loginInfoRequest.getPasswordToBeSaved()));
-        login.setWebsite(loginInfoRequest.getWebsite());
-        return login;
+        loginInfo.setWebsite(loginInfoRequest.getWebsite());
+        return loginInfo;
     }
-    public static Identity map(IdentityInfoRequest identityInfoRequest) {
-        Identity identity = new Identity();
-        identity.setFirstName(identityInfoRequest.getFirstName());
-        identity.setMiddleName(identityInfoRequest.getMiddleName());
-        identity.setLastName(identityInfoRequest.getLastName());
-        identity.setAddress(identityInfoRequest.getAddress());
-        return identity;
+    public static IdentityInfo map(IdentityInfoRequest identityInfoRequest) {
+        IdentityInfo identityInfo = new IdentityInfo();
+        identityInfo.setFirstName(identityInfoRequest.getFirstName());
+        identityInfo.setMiddleName(identityInfoRequest.getMiddleName());
+        identityInfo.setLastName(identityInfoRequest.getLastName());
+        identityInfo.setAddress(identityInfoRequest.getAddress());
+        return identityInfo;
     }
 
-    public static Identity map(EditIdentityInfoRequest editIdentityInfoRequest, Identity foundIdentity) {
-        if (editIdentityInfoRequest.getNationalIdentityNumber() != null)foundIdentity.setNationalIdentityNumber(editIdentityInfoRequest.getNationalIdentityNumber());
-        if (editIdentityInfoRequest.getFirstName() != null)foundIdentity.setFirstName(editIdentityInfoRequest.getFirstName());
-        if (editIdentityInfoRequest.getLastName() != null)foundIdentity.setLastName(editIdentityInfoRequest.getLastName());
-        if (editIdentityInfoRequest.getMiddleName() != null)foundIdentity.setMiddleName(editIdentityInfoRequest.getMiddleName());
-        if (editIdentityInfoRequest.getAddress() != null)foundIdentity.setAddress(editIdentityInfoRequest.getAddress());
-        return foundIdentity;
+    public static IdentityInfo map(EditIdentityInfoRequest editIdentityInfoRequest, IdentityInfo foundIdentityInfo) {
+        if (editIdentityInfoRequest.getNationalIdentityNumber() != null) foundIdentityInfo.setNationalIdentityNumber(editIdentityInfoRequest.getNationalIdentityNumber());
+        if (editIdentityInfoRequest.getFirstName() != null) foundIdentityInfo.setFirstName(editIdentityInfoRequest.getFirstName());
+        if (editIdentityInfoRequest.getLastName() != null) foundIdentityInfo.setLastName(editIdentityInfoRequest.getLastName());
+        if (editIdentityInfoRequest.getMiddleName() != null) foundIdentityInfo.setMiddleName(editIdentityInfoRequest.getMiddleName());
+        if (editIdentityInfoRequest.getAddress() != null) foundIdentityInfo.setAddress(editIdentityInfoRequest.getAddress());
+        return foundIdentityInfo;
     }
 
     public static DeleteIdentityInfoResponse mapResponse() {

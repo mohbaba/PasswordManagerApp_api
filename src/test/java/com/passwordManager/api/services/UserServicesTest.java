@@ -12,6 +12,7 @@ import com.passwordManager.api.dtos.requests.loginInfoRequests.DeleteLoginInfoRe
 import com.passwordManager.api.dtos.requests.loginInfoRequests.EditLoginInfoRequest;
 import com.passwordManager.api.dtos.requests.loginInfoRequests.LoginInfoRequest;
 import com.passwordManager.api.exceptions.*;
+import com.passwordManager.api.utilities.Cipher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ class UserServicesTest {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsername("feyi");
         loginRequest.setPassword("pass");
+        userServices.login(loginRequest);
     }
 
 
@@ -133,9 +135,10 @@ class UserServicesTest {
 
         DeleteLoginInfoRequest deleteLoginInfoRequest = new DeleteLoginInfoRequest();
         User user = userRepository.findByUsername("feyi");
-        String id = user.getLoginDetails().getFirst().getId();
+        String id = user.getLoginInfoDetails().getFirst().getId();
         deleteLoginInfoRequest.setLoginInfoId(id);
         deleteLoginInfoRequest.setUsername("feyi");
+        deleteLoginInfoRequest.setPassword("pass");
         userServices.deleteLoginInfo(deleteLoginInfoRequest);
         assertEquals(0,userServices.countLoginInfoFor("feyi"));
 
@@ -152,8 +155,8 @@ class UserServicesTest {
         assertEquals(1,userServices.countLoginInfoFor("feyi"));
 
         User user = userRepository.findByUsername("feyi");
-        assertEquals("moh", user.getLoginDetails().getFirst().getSavedUsername());
-        String id = user.getLoginDetails().getFirst().getId();
+        assertEquals("moh", user.getLoginInfoDetails().getFirst().getSavedUsername());
+        String id = user.getLoginInfoDetails().getFirst().getId();
         EditLoginInfoRequest editLoginInfoRequest = new EditLoginInfoRequest();
         editLoginInfoRequest.setNewPassword("babs");
         editLoginInfoRequest.setPostId(id);
@@ -163,8 +166,8 @@ class UserServicesTest {
 
         user = userRepository.findByUsername("feyi");
         assertEquals(1,userServices.countLoginInfoFor("feyi"));
-        assertEquals("baba",user.getLoginDetails().getFirst().getSavedUsername());
-        assertEquals("babs",user.getLoginDetails().getFirst().getSavedPassword());
+        assertEquals("baba",user.getLoginInfoDetails().getFirst().getSavedUsername());
+        assertEquals("babs", Cipher.decrypt(user.getLoginInfoDetails().getFirst().getSavedPassword()));
     }
 
     @Test
@@ -232,6 +235,7 @@ class UserServicesTest {
         EditIdentityInfoRequest editIdentityInfoRequest = new EditIdentityInfoRequest();
         editIdentityInfoRequest.setIdentityInfoId(user.getIdentities().getFirst().getId());
         editIdentityInfoRequest.setUsername("feyi");
+        editIdentityInfoRequest.setPassword("pass");
         editIdentityInfoRequest.setNationalIdentityNumber("11211111111");
         editIdentityInfoRequest.setFirstName("abike");
         userServices.editIdentityInfo(editIdentityInfoRequest);

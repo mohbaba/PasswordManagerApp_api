@@ -94,11 +94,11 @@ public class UserServicesImpl implements UserServices{
     @Override
     public LoginInfoResponse addLoginInfo(LoginInfoRequest loginInfoRequest) {
         checkUserLoggedIn(loginInfoRequest.getUsername());
-        Login login = loginInfoServices.addLogin(loginInfoRequest);
+        LoginInfo loginInfo = loginInfoServices.addLogin(loginInfoRequest);
         User user = userRepository.findByUsername(loginInfoRequest.getUsername());
         checkUserExists(user);
-        addLoginDetailsTo(user, login);
-        return map(login);
+        addLoginDetailsTo(user, loginInfo);
+        return map(loginInfo);
     }
 
     @Override
@@ -108,8 +108,8 @@ public class UserServicesImpl implements UserServices{
         checkUserExists(user);
         authenticateUser(user, deleteLoginInfoRequest.getPassword());
 
-        Login login = loginInfoServices.deleteLoginInfo(deleteLoginInfoRequest);
-        user.getLoginDetails().remove(login);
+        LoginInfo loginInfo = loginInfoServices.deleteLoginInfo(deleteLoginInfoRequest);
+        user.getLoginInfoDetails().remove(loginInfo);
         userRepository.save(user);
         DeleteLoginInfoResponse response = new DeleteLoginInfoResponse();
         response.setDeleted(true);
@@ -119,20 +119,20 @@ public class UserServicesImpl implements UserServices{
     @Override
     public IdentityInfoResponse addIdentityInfo(IdentityInfoRequest identityInfoRequest) {
         checkUserLoggedIn(identityInfoRequest.getUsername());
-        Identity savedIdentity = identityInfoServices.addIdentityInfo(identityInfoRequest);
+        IdentityInfo savedIdentityInfo = identityInfoServices.addIdentityInfo(identityInfoRequest);
         User user = userRepository.findByUsername(identityInfoRequest.getUsername());
         checkUserExists(user);
 
-        addIdentityInfoTo(user, savedIdentity);
+        addIdentityInfoTo(user, savedIdentityInfo);
         userRepository.save(user);
 
-        return mapResponse(savedIdentity,user);
+        return mapResponse(savedIdentityInfo,user);
 
     }
 
-    private static void addIdentityInfoTo(User user, Identity savedIdentity) {
-        List<Identity> userIdentities = user.getIdentities();
-        userIdentities.add(savedIdentity);
+    private static void addIdentityInfoTo(User user, IdentityInfo savedIdentityInfo) {
+        List<IdentityInfo> userIdentities = user.getIdentities();
+        userIdentities.add(savedIdentityInfo);
         user.setIdentities(userIdentities);
     }
 
@@ -151,8 +151,8 @@ public class UserServicesImpl implements UserServices{
         checkUserLoggedIn(deleteIdentityInfoRequest.getUsername());
         User user = userRepository.findByUsername(deleteIdentityInfoRequest.getUsername());
         checkUserExists(user);
-        Identity deletedIdentityInfo = identityInfoServices.deleteIdentityInfo(deleteIdentityInfoRequest);
-        user.getIdentities().remove(deletedIdentityInfo);
+        IdentityInfo deletedIdentityInfoInfo = identityInfoServices.deleteIdentityInfo(deleteIdentityInfoRequest);
+        user.getIdentities().remove(deletedIdentityInfoInfo);
         userRepository.save(user);
 
         return mapResponse();
@@ -176,21 +176,21 @@ public class UserServicesImpl implements UserServices{
     }
 
     private GetIdentityInfoResponse getIdentityInfoResponse(EditIdentityInfoRequest editIdentityInfoRequest, User user) {
-        Identity editedIdentity = identityInfoServices.editIdentityInfo(editIdentityInfoRequest);
-        replaceIdentityInfo(user, editedIdentity);
-        GetIdentityInfoResponse response = mapResponse(editedIdentity);
-        decryptIdentityInfo(response, editedIdentity);
+        IdentityInfo editedIdentityInfo = identityInfoServices.editIdentityInfo(editIdentityInfoRequest);
+        replaceIdentityInfo(user, editedIdentityInfo);
+        GetIdentityInfoResponse response = mapResponse(editedIdentityInfo);
+        decryptIdentityInfo(response, editedIdentityInfo);
         return response;
     }
 
-    private static void decryptIdentityInfo(GetIdentityInfoResponse response, Identity editedIdentity) {
-        response.setNationalIdentityNumber(NumericCipher.decrypt(editedIdentity.getNationalIdentityNumber()));
+    private static void decryptIdentityInfo(GetIdentityInfoResponse response, IdentityInfo editedIdentityInfo) {
+        response.setNationalIdentityNumber(NumericCipher.decrypt(editedIdentityInfo.getNationalIdentityNumber()));
     }
 
-    private void replaceIdentityInfo(User user, Identity editedIdentity) {
-        List<Identity> userIdentities = user.getIdentities();
-        userIdentities.removeIf(identity -> identity.getId().equals(editedIdentity.getId()));
-        userIdentities.add(editedIdentity);
+    private void replaceIdentityInfo(User user, IdentityInfo editedIdentityInfo) {
+        List<IdentityInfo> userIdentities = user.getIdentities();
+        userIdentities.removeIf(identity -> identity.getId().equals(editedIdentityInfo.getId()));
+        userIdentities.add(editedIdentityInfo);
         user.setIdentities(userIdentities);
         userRepository.save(user);
     }
@@ -202,9 +202,9 @@ public class UserServicesImpl implements UserServices{
         checkUserExists(user);
         authenticateUser(user,getIdentityInfoRequest.getPassword());
 
-        Identity savedIdentity = identityInfoServices.getIdentityInfo(getIdentityInfoRequest);
+        IdentityInfo savedIdentityInfo = identityInfoServices.getIdentityInfo(getIdentityInfoRequest);
 
-        return decryptIdentity(savedIdentity);
+        return decryptIdentity(savedIdentityInfo);
 
 
     }
@@ -215,9 +215,9 @@ public class UserServicesImpl implements UserServices{
         if (getIdentityInfoRequest.getPassword() == null)throw new FieldRequiredException("Password required");
     }
 
-    private static GetIdentityInfoResponse decryptIdentity(Identity savedIdentity) {
-        GetIdentityInfoResponse response = mapResponse(savedIdentity);
-        decryptIdentityInfo(response, savedIdentity);
+    private static GetIdentityInfoResponse decryptIdentity(IdentityInfo savedIdentityInfo) {
+        GetIdentityInfoResponse response = mapResponse(savedIdentityInfo);
+        decryptIdentityInfo(response, savedIdentityInfo);
         return response;
     }
 
@@ -321,17 +321,17 @@ public class UserServicesImpl implements UserServices{
         User user = userRepository.findByUsername(editLoginInfoRequest.getUsername());
         checkUserExists(user);
 
-        Login editedLogin = loginInfoServices.editLoginInfo(editLoginInfoRequest);
-        replaceLoginInfo(user, editedLogin);
+        LoginInfo editedLoginInfo = loginInfoServices.editLoginInfo(editLoginInfoRequest);
+        replaceLoginInfo(user, editedLoginInfo);
         userRepository.save(user);
-        return map(editedLogin);
+        return map(editedLoginInfo);
     }
 
-    private static void replaceLoginInfo(User user, Login editedLogin) {
-        List<Login> userLogins = user.getLoginDetails();
-        userLogins.removeIf(eachLogin -> eachLogin.getId().equals(editedLogin.getId()));
-        userLogins.add(editedLogin);
-        user.setLoginDetails(userLogins);
+    private static void replaceLoginInfo(User user, LoginInfo editedLoginInfo) {
+        List<LoginInfo> userLoginInfos = user.getLoginInfoDetails();
+        userLoginInfos.removeIf(eachLogin -> eachLogin.getId().equals(editedLoginInfo.getId()));
+        userLoginInfos.add(editedLoginInfo);
+        user.setLoginInfoDetails(userLoginInfos);
     }
 
     @Override
@@ -342,9 +342,9 @@ public class UserServicesImpl implements UserServices{
         checkUserExists(user);
         authenticateUser(user, getLoginInfoRequest.getPassword());
 
-        Login login = loginInfoServices.getLoginInfo(getLoginInfoRequest);
-        GetLoginInfoResponse response = decryptLoginInfo(login);
-        return mapToResponse(login, response);
+        LoginInfo loginInfo = loginInfoServices.getLoginInfo(getLoginInfoRequest);
+        GetLoginInfoResponse response = decryptLoginInfo(loginInfo);
+        return mapToResponse(loginInfo, response);
     }
 
     private static void checkNullFields(GetLoginInfoRequest getLoginInfoRequest) {
@@ -354,9 +354,9 @@ public class UserServicesImpl implements UserServices{
                 "necessary details to fetch login details");
     }
 
-    private static GetLoginInfoResponse decryptLoginInfo(Login login) {
+    private static GetLoginInfoResponse decryptLoginInfo(LoginInfo loginInfo) {
         GetLoginInfoResponse response = new GetLoginInfoResponse();
-        response.setSavedPassword(Cipher.decrypt(login.getSavedPassword()));
+        response.setSavedPassword(Cipher.decrypt(loginInfo.getSavedPassword()));
         return response;
     }
 
@@ -374,7 +374,7 @@ public class UserServicesImpl implements UserServices{
         checkUserLoggedIn(username);
         User user = userRepository.findByUsername(username);
 
-        return user.getLoginDetails().size();
+        return user.getLoginInfoDetails().size();
     }
 
     private static void validateLogin(LoginRequest loginRequest, User user){
@@ -397,10 +397,10 @@ public class UserServicesImpl implements UserServices{
         if (userRepository.existsByUsername(username))throw new UsernameExistsException(String.format("%s already exists",username));
     }
 
-    private void addLoginDetailsTo(User user, Login login) {
-        List<Login> userLoginDetails = user.getLoginDetails();
-        userLoginDetails.add(login);
-        user.setLoginDetails(userLoginDetails);
+    private void addLoginDetailsTo(User user, LoginInfo loginInfo) {
+        List<LoginInfo> userLoginDetailInfos = user.getLoginInfoDetails();
+        userLoginDetailInfos.add(loginInfo);
+        user.setLoginInfoDetails(userLoginDetailInfos);
         userRepository.save(user);
     }
 

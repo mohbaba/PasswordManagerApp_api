@@ -78,7 +78,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/edit_login_information")
+    @PatchMapping("/edit_login_information")
     public ResponseEntity<?> addLoginInfo(@RequestBody EditLoginInfoRequest editLoginInfoRequest){
         try {
             LoginInfoResponse response = userServices.editLoginInfo(editLoginInfoRequest);
@@ -128,7 +128,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/edit_identity_information")
+    @PatchMapping("/edit_identity_information")
     public ResponseEntity<?> getIdentityInfo(@RequestBody EditIdentityInfoRequest editIdentityInfoRequest){
         try {
             GetIdentityInfoResponse response =
@@ -180,7 +180,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/edit_credit_card_information")
+    @PatchMapping("/edit_credit_card_information")
     public ResponseEntity<?> editCreditCardInfo(@RequestBody EditCardInfoRequest editCardInfoRequest){
         try {
             GetCreditCardInfoResponse response =

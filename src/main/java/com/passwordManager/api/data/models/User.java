@@ -13,8 +13,8 @@ public class User {
     private String username;
     private boolean isLoggedIn;
     private String password;
-    private List<Login> loginDetails = new ArrayList<>();
-    private List<Identity> identities = new ArrayList<>();
+    private List<LoginInfo> loginInfoDetails = new ArrayList<>();
+    private List<IdentityInfo> identities = new ArrayList<>();
     private List<CreditCardInfo> creditCardDetails = new ArrayList<>();
 
     public void setUsername(String username) {
