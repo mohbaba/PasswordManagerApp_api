@@ -3,30 +3,31 @@ package com.passwordManager.api.services;
 
 import com.passwordManager.api.data.models.IdentityInfo;
 import com.passwordManager.api.data.repositories.IdentityRepository;
+import com.passwordManager.api.dtos.UserData;
 import com.passwordManager.api.dtos.requests.identityInfoRequests.DeleteIdentityInfoRequest;
 import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityInfoRequest;
 import com.passwordManager.api.dtos.requests.identityInfoRequests.GetIdentityInfoRequest;
 import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
 import com.passwordManager.api.exceptions.*;
-import com.passwordManager.api.utilities.NumericCipher;
+import org.cipher.NumericCipher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 import static com.passwordManager.api.utilities.Mapper.map;
-import static com.passwordManager.api.utilities.NumericCipher.encrypt;
+
 
 @Service
 public class IdentityInfoServicesImpl implements IdentityInfoServices{
     @Autowired
     private IdentityRepository identityRepository;
     @Override
-    public IdentityInfo addIdentityInfo(IdentityInfoRequest identityInfoRequest) {
+    public IdentityInfo addIdentityInfo(IdentityInfoRequest identityInfoRequest, UserData userData) {
         validate(identityInfoRequest.getNationalIdentityNumber().replace(" ", ""));
         if (identityInfoRequest.getNationalIdentityNumber().length() != 11)throw new InvalidNiNException("NIN number must contain 11 digits");
         IdentityInfo identityInfo = map(identityInfoRequest);
-        if (identityInfoRequest.getNationalIdentityNumber() != null) identityInfo.setNationalIdentityNumber(NumericCipher.encrypt(Long.parseLong(identityInfoRequest.getNationalIdentityNumber())));
+        if (identityInfoRequest.getNationalIdentityNumber() != null) identityInfo.setNationalIdentityNumber(NumericCipher.encrypt(Long.parseLong(identityInfoRequest.getNationalIdentityNumber()), userData.getUserData().getKey()));
         return identityRepository.save(identityInfo);
     }
 

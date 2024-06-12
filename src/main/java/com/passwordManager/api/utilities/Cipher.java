@@ -2,8 +2,8 @@ package com.passwordManager.api.utilities;
 
 public class Cipher {
     public static final String ALPHABETS = "abcdefghijklmnopqrstuvwxyz";
-    public static String encrypt(String message) {
-        int shiftKey = 25;
+    public static String encrypt(String message, int shiftKey) {
+//        int shiftKey = 25;
         StringBuilder cipherText = new StringBuilder();
         for (int position = 0; position < message.length(); position++) {
             char character = message.charAt(position);
@@ -26,8 +26,8 @@ public class Cipher {
                 Character.toUpperCase(ALPHABETS.charAt(shiftedPosition));
     }
 
-    public static String decrypt(String cipherText) {
-        int shiftKey = 25;
+    public static String decrypt(String cipherText, int shiftKey) {
+//        int shiftKey = 25;
         StringBuilder decryptedMessage = new StringBuilder();
         for (int position = 0; position < cipherText.length(); position++) {
             char encryptedCharacter = cipherText.charAt(position);

@@ -23,6 +23,7 @@ import com.passwordManager.api.dtos.responses.identityInfoResponses.IdentityInfo
 import com.passwordManager.api.dtos.responses.loginInfoResponses.DeleteLoginInfoResponse;
 import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
 import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
+import com.passwordManager.api.exceptions.InvalidURLException;
 
 public interface UserServices {
     RegisterUserResponse register(RegisterUserRequest registerUserRequest);
@@ -37,11 +38,11 @@ public interface UserServices {
 
     long countLoginInfoFor(String username);
 
-    LoginInfoResponse addLoginInfo(LoginInfoRequest loginInfoRequest);
+    LoginInfoResponse addLoginInfo(LoginInfoRequest loginInfoRequest) throws InvalidURLException;
 
     DeleteLoginInfoResponse deleteLoginInfo(DeleteLoginInfoRequest deleteLoginInfoRequest);
 
-    LoginInfoResponse editLoginInfo(EditLoginInfoRequest editLoginInfoRequest);
+    LoginInfoResponse editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) throws InvalidURLException;
     GetLoginInfoResponse getLoginInfo(GetLoginInfoRequest getLoginInfoRequest);
 
     IdentityInfoResponse addIdentityInfo(IdentityInfoRequest identityInfoRequest);

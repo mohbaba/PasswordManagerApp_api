@@ -34,6 +34,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
+@CrossOrigin("*")
 public class UserController {
     @Autowired
     UserServices userServices;

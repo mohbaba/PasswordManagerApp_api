@@ -2,6 +2,7 @@ package com.passwordManager.api.services;
 
 import com.passwordManager.api.data.models.*;
 import com.passwordManager.api.data.repositories.UserRepository;
+import com.passwordManager.api.dtos.UserData;
 import com.passwordManager.api.dtos.requests.*;
 import com.passwordManager.api.dtos.requests.creditCardInfoRequests.CreditCardInfoRequest;
 import com.passwordManager.api.dtos.requests.creditCardInfoRequests.DeleteCardInfoRequest;
@@ -26,8 +27,9 @@ import com.passwordManager.api.dtos.responses.loginInfoResponses.DeleteLoginInfo
 import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
 import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
 import com.passwordManager.api.exceptions.*;
-import com.passwordManager.api.utilities.Cipher;
-import com.passwordManager.api.utilities.NumericCipher;
+
+import org.cipher.Cipher;
+import org.cipher.NumericCipher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,13 +94,20 @@ public class UserServicesImpl implements UserServices{
 
 
     @Override
-    public LoginInfoResponse addLoginInfo(LoginInfoRequest loginInfoRequest) {
+    public LoginInfoResponse addLoginInfo(LoginInfoRequest loginInfoRequest) throws InvalidURLException {
         checkUserLoggedIn(loginInfoRequest.getUsername());
-        LoginInfo loginInfo = loginInfoServices.addLogin(loginInfoRequest);
         User user = userRepository.findByUsername(loginInfoRequest.getUsername());
         checkUserExists(user);
+        UserData userData = getUserDataFrom(user);
+        LoginInfo loginInfo = loginInfoServices.addLogin(loginInfoRequest, userData);
         addLoginDetailsTo(user, loginInfo);
         return map(loginInfo);
+    }
+
+    private static UserData getUserDataFrom(User user) {
+        UserData userData = new UserData();
+        userData.setUserData(user);
+        return userData;
     }
 
     @Override
@@ -119,21 +128,22 @@ public class UserServicesImpl implements UserServices{
     @Override
     public IdentityInfoResponse addIdentityInfo(IdentityInfoRequest identityInfoRequest) {
         checkUserLoggedIn(identityInfoRequest.getUsername());
-        IdentityInfo savedIdentityInfo = identityInfoServices.addIdentityInfo(identityInfoRequest);
         User user = userRepository.findByUsername(identityInfoRequest.getUsername());
         checkUserExists(user);
+        UserData userData = getUserDataFrom(user);
+        IdentityInfo savedIdentityInfo = identityInfoServices.addIdentityInfo(identityInfoRequest
+                , userData);
 
         addIdentityInfoTo(user, savedIdentityInfo);
-        userRepository.save(user);
-
         return mapResponse(savedIdentityInfo,user);
 
     }
 
-    private static void addIdentityInfoTo(User user, IdentityInfo savedIdentityInfo) {
+    private  void addIdentityInfoTo(User user, IdentityInfo savedIdentityInfo) {
         List<IdentityInfo> userIdentities = user.getIdentities();
         userIdentities.add(savedIdentityInfo);
         user.setIdentities(userIdentities);
+        userRepository.save(user);
     }
 
 
@@ -179,12 +189,13 @@ public class UserServicesImpl implements UserServices{
         IdentityInfo editedIdentityInfo = identityInfoServices.editIdentityInfo(editIdentityInfoRequest);
         replaceIdentityInfo(user, editedIdentityInfo);
         GetIdentityInfoResponse response = mapResponse(editedIdentityInfo);
-        decryptIdentityInfo(response, editedIdentityInfo);
+        decryptIdentityInfo(response, editedIdentityInfo,user);
         return response;
     }
 
-    private static void decryptIdentityInfo(GetIdentityInfoResponse response, IdentityInfo editedIdentityInfo) {
-        response.setNationalIdentityNumber(NumericCipher.decrypt(editedIdentityInfo.getNationalIdentityNumber()));
+    private static void decryptIdentityInfo(GetIdentityInfoResponse response,
+                                            IdentityInfo editedIdentityInfo,User user) {
+        response.setNationalIdentityNumber(NumericCipher.decrypt(editedIdentityInfo.getNationalIdentityNumber(),user.getKey()));
     }
 
     private void replaceIdentityInfo(User user, IdentityInfo editedIdentityInfo) {
@@ -204,7 +215,7 @@ public class UserServicesImpl implements UserServices{
 
         IdentityInfo savedIdentityInfo = identityInfoServices.getIdentityInfo(getIdentityInfoRequest);
 
-        return decryptIdentity(savedIdentityInfo);
+        return decryptIdentity(savedIdentityInfo,user);
 
 
     }
@@ -215,9 +226,10 @@ public class UserServicesImpl implements UserServices{
         if (getIdentityInfoRequest.getPassword() == null)throw new FieldRequiredException("Password required");
     }
 
-    private static GetIdentityInfoResponse decryptIdentity(IdentityInfo savedIdentityInfo) {
+    private static GetIdentityInfoResponse decryptIdentity(IdentityInfo savedIdentityInfo,
+                                                           User user) {
         GetIdentityInfoResponse response = mapResponse(savedIdentityInfo);
-        decryptIdentityInfo(response, savedIdentityInfo);
+        decryptIdentityInfo(response, savedIdentityInfo, user);
         return response;
     }
 
@@ -227,8 +239,10 @@ public class UserServicesImpl implements UserServices{
         checkUserLoggedIn(creditCardInfoRequest.getUsername());
         User user = userRepository.findByUsername(creditCardInfoRequest.getUsername());
         checkUserExists(user);
+        UserData userData = getUserDataFrom(user);
 
-        CreditCardInfo creditCard = creditCardInfoServices.addCreditCardInfo(creditCardInfoRequest);
+        CreditCardInfo creditCard =
+                creditCardInfoServices.addCreditCardInfo(creditCardInfoRequest,userData);
         addCreditCardInfoTo(user, creditCard);
 
 
@@ -252,8 +266,7 @@ public class UserServicesImpl implements UserServices{
         authenticateUser(user,getCardInfoRequest.getPassword());
 
         CreditCardInfo savedCard = creditCardInfoServices.getCreditCardInfo(getCardInfoRequest);
-        return decryptCardInfo(savedCard);
-
+        return decryptCardInfo(savedCard, user);
     }
 
     @Override
@@ -262,13 +275,14 @@ public class UserServicesImpl implements UserServices{
         User user = userRepository.findByUsername(editCardInfoRequest.getUsername());
         checkUserExists(user);
         authenticateUser(user, editCardInfoRequest.getPassword());
-
-        CreditCardInfo editedCard = creditCardInfoServices.editCreditCardInfo(editCardInfoRequest);
+        UserData userData = getUserDataFrom(user);
+        CreditCardInfo editedCard = creditCardInfoServices.editCreditCardInfo(editCardInfoRequest
+                ,userData);
         replaceCardInfo(user, editedCard);
         userRepository.save(user);
 
 
-        return decryptCardInfo(editedCard);
+        return decryptCardInfo(editedCard, user);
 
     }
 
@@ -279,10 +293,10 @@ public class UserServicesImpl implements UserServices{
         user.setCreditCardDetails(userCardDetails);
     }
 
-    private static GetCreditCardInfoResponse decryptCardInfo(CreditCardInfo editedCard) {
+    private static GetCreditCardInfoResponse decryptCardInfo(CreditCardInfo editedCard, User user) {
         GetCreditCardInfoResponse response = map(editedCard);
-        response.setCvv(NumericCipher.decrypt(editedCard.getCvv()));
-        response.setCardNumber(NumericCipher.decrypt(editedCard.getCardNumber()));
+        response.setCvv(NumericCipher.decrypt(editedCard.getCvv(), user.getKey()));
+        response.setCardNumber(NumericCipher.decrypt(editedCard.getCardNumber(), user.getKey()));
         return response;
     }
 
@@ -316,12 +330,13 @@ public class UserServicesImpl implements UserServices{
     }
 
     @Override
-    public LoginInfoResponse editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) {
+    public LoginInfoResponse editLoginInfo(EditLoginInfoRequest editLoginInfoRequest) throws InvalidURLException {
         checkUserLoggedIn(editLoginInfoRequest.getUsername());
         User user = userRepository.findByUsername(editLoginInfoRequest.getUsername());
         checkUserExists(user);
 
-        LoginInfo editedLoginInfo = loginInfoServices.editLoginInfo(editLoginInfoRequest);
+        UserData userData = getUserDataFrom(user);
+        LoginInfo editedLoginInfo = loginInfoServices.editLoginInfo(editLoginInfoRequest, userData);
         replaceLoginInfo(user, editedLoginInfo);
         userRepository.save(user);
         return map(editedLoginInfo);
@@ -339,11 +354,10 @@ public class UserServicesImpl implements UserServices{
         checkNullFields(getLoginInfoRequest);
         checkUserLoggedIn(getLoginInfoRequest.getUsername());
         User user = userRepository.findByUsername(getLoginInfoRequest.getUsername());
-        checkUserExists(user);
         authenticateUser(user, getLoginInfoRequest.getPassword());
 
         LoginInfo loginInfo = loginInfoServices.getLoginInfo(getLoginInfoRequest);
-        GetLoginInfoResponse response = decryptLoginInfo(loginInfo);
+        GetLoginInfoResponse response = decryptLoginInfo(loginInfo,user);
         return mapToResponse(loginInfo, response);
     }
 
@@ -354,16 +368,17 @@ public class UserServicesImpl implements UserServices{
                 "necessary details to fetch login details");
     }
 
-    private static GetLoginInfoResponse decryptLoginInfo(LoginInfo loginInfo) {
+    private static GetLoginInfoResponse decryptLoginInfo(LoginInfo loginInfo,User user) {
         GetLoginInfoResponse response = new GetLoginInfoResponse();
-        response.setSavedPassword(Cipher.decrypt(loginInfo.getSavedPassword()));
+        response.setSavedPassword(Cipher.decrypt(loginInfo.getSavedPassword(), user.getKey()));
         return response;
     }
 
 
 
     private void authenticateUser(User user, String password){
-        if (!Cipher.decrypt(user.getPassword()).equals(password))throw new IncorrectPasswordException(
+        checkUserExists(user);
+        if (!Cipher.decrypt(user.getPassword(),user.getKey()).equals(password))throw new IncorrectPasswordException(
                 "The " +
                 "password you entered is incorrect");
     }
@@ -379,10 +394,9 @@ public class UserServicesImpl implements UserServices{
 
     private static void validateLogin(LoginRequest loginRequest, User user){
         check(loginRequest.getUsername());
-        if (user == null)throw new UserNotFoundException(String.format("%s does not exist", loginRequest.getUsername()));
-        if (!loginRequest.getPassword().equals(Cipher.decrypt(user.getPassword())))throw new IncorrectPasswordException(
-                "Password " +
-                "is not correct");
+        if (user == null)throw new UserNotFoundException("Username or password " +
+                        "entered is not correct");
+        if (!loginRequest.getPassword().equals(Cipher.decrypt(user.getPassword(), user.getKey())))throw new IncorrectPasswordException("Username or password entered is not correct");
     }
 
     private static void check(String username){
