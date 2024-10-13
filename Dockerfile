@@ -1,14 +1,9 @@
-# Use a base image with Java 21
-FROM openjdk:21-jre-slim
 
-# Set the working directory
-WORKDIR /app
+FROM maven:3.8.7 as build
+COPY . .
+RUN mvn -B clean package -DskipTests
 
-# Copy the JAR file to the Docker image
-COPY target/passwordManager.jar app.jar
-
-# Expose the port your app runs on
+FROM openjdk:17
+COPY --from=build target/*.jar passwordmanager.jar
 EXPOSE 8080
-
-# Run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dserver.port=8080", "passwordmanager.jar"]
