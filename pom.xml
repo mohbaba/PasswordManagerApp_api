@@ -14,7 +14,7 @@
 	<name>Password Manager</name>
 	<description>A password manager to manage sensitive information.</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
