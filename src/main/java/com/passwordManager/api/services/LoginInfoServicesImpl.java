@@ -20,8 +20,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 
+import static com.passwordManager.api.utilities.Cipher.encrypt;
 import static com.passwordManager.api.utilities.Mapper.map;
-import static org.cipher.Cipher.encrypt;
+
 
 @Service
 public class LoginInfoServicesImpl implements LoginInfoServices{

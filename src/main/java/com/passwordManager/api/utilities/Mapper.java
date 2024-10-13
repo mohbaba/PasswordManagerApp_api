@@ -15,11 +15,12 @@ import com.passwordManager.api.dtos.responses.identityInfoResponses.GetIdentityI
 import com.passwordManager.api.dtos.responses.identityInfoResponses.IdentityInfoResponse;
 import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
 import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
+
+import static com.passwordManager.api.utilities.Cipher.decrypt;
+import static com.passwordManager.api.utilities.Cipher.encrypt;
 import static com.passwordManager.api.utilities.CreditCardValidator.getCardType;
 import static com.passwordManager.api.utilities.Utils.getExpirationMonth;
 import static com.passwordManager.api.utilities.Utils.getExpirationYear;
-import static org.cipher.Cipher.decrypt;
-import static org.cipher.Cipher.encrypt;
 
 public class Mapper {
 

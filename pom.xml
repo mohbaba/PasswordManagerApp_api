@@ -60,11 +60,11 @@
 			<optional>true</optional>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.encryptor</groupId>
-			<artifactId>Encryptor</artifactId>
-			<version>1.0</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.encryptor</groupId>-->
+<!--			<artifactId>Encryptor</artifactId>-->
+<!--			<version>1.0</version>-->
+<!--		</dependency>-->
 
 
 	</dependencies>

@@ -11,7 +11,7 @@ import com.passwordManager.api.exceptions.CreditCardInfoNotFoundException;
 import com.passwordManager.api.exceptions.FieldRequiredException;
 import com.passwordManager.api.exceptions.IncorrectCardDetailsException;
 import com.passwordManager.api.exceptions.InvalidCreditCardException;
-import org.cipher.NumericCipher;
+import com.passwordManager.api.utilities.NumericCipher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

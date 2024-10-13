@@ -27,9 +27,8 @@ import com.passwordManager.api.dtos.responses.loginInfoResponses.DeleteLoginInfo
 import com.passwordManager.api.dtos.responses.loginInfoResponses.GetLoginInfoResponse;
 import com.passwordManager.api.dtos.responses.loginInfoResponses.LoginInfoResponse;
 import com.passwordManager.api.exceptions.*;
-
-import org.cipher.Cipher;
-import org.cipher.NumericCipher;
+import com.passwordManager.api.utilities.Cipher;
+import com.passwordManager.api.utilities.NumericCipher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

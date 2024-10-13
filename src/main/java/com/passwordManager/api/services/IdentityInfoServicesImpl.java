@@ -9,7 +9,7 @@ import com.passwordManager.api.dtos.requests.identityInfoRequests.EditIdentityIn
 import com.passwordManager.api.dtos.requests.identityInfoRequests.GetIdentityInfoRequest;
 import com.passwordManager.api.dtos.requests.identityInfoRequests.IdentityInfoRequest;
 import com.passwordManager.api.exceptions.*;
-import org.cipher.NumericCipher;
+import com.passwordManager.api.utilities.NumericCipher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
